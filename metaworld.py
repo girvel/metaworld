@@ -11,6 +11,35 @@ class Action:
     talks_to = namedtuple("talks", "person")
 
 
+class Ui:
+    @staticmethod
+    def choose(options):
+        for i, option in enumerate(options):
+            print(f'{i + 1}. {option["line"]}')
+
+        while True:
+            try:
+                return options[int(input("> ")) - 1]
+            except ValueError:
+                pass
+
+    @staticmethod
+    def play_lines(lines):
+        for line in lines:
+            print(line, end='')
+            input()
+
+    @staticmethod
+    def describe_interior(interior):
+        for state in interior['states']:
+            print(state['line'])
+
+    @staticmethod
+    def finish_the_game():
+        input("The end!")
+        exit()
+
+
 if __name__ == '__main__':
     ms = Metasystem()
 
@@ -21,23 +50,15 @@ if __name__ == '__main__':
             case Action.talks_to(person):
                 dialogue = person.lines[person.lines_state]
 
-                for line in dialogue['lines']:
-                    print(line, end='')
-                    input()
+                Ui.play_lines(dialogue['lines'])
 
                 if not 'options' in dialogue:
-                    input("The end!")
-                    exit()
+                    Ui.finish_the_game()
 
-                for i, option in enumerate(dialogue['options']):
-                    print(f'{i + 1}. {option["line"]}')
-
-                person.lines_state \
-                    = dialogue['options'][int(input("> ")) - 1]['goto']
+                person.lines_state = Ui.choose(dialogue['options'])['goto']
 
             case Action.stands_at(place):
-                for state in place.interior['states']:
-                    print(state['line'])
+                Ui.describe_interior(place.interior)
 
                 options = [
                     option
@@ -45,10 +66,7 @@ if __name__ == '__main__':
                     for option in state.get('options', [])
                 ]
 
-                for i, option in enumerate(options):
-                    print(f'{i + 1}. {option["line"]}')
-
-                name, state = options[int(input("> ")) - 1]['goto'].split('.')
+                name, state = Ui.choose(options)['goto'].split('.')
                 person = next(
                     p for p in place.persons if p.name.lower() == name.lower()
                 )
