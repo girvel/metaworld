@@ -1,0 +1,3 @@
+[submodule "lib/ecs"]
+	path = lib/ecs
+	url = https://github.com/girvel/ecs
