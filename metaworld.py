@@ -22,6 +22,8 @@ class Ui:
                 return options[int(input("> ")) - 1]
             except ValueError:
                 pass
+            except IndexError:
+                pass
 
     @staticmethod
     def play_lines(lines):
@@ -33,6 +35,7 @@ class Ui:
     def describe_interior(interior):
         for state in interior['states']:
             print(state['line'])
+            print()
 
     @staticmethod
     def finish_the_game():
@@ -66,14 +69,23 @@ if __name__ == '__main__':
                     for option in state.get('options', [])
                 ]
 
-                name, state = Ui.choose(options)['goto'].split('.')
-                person = next(
-                    p for p in place.persons if p.name.lower() == name.lower()
-                )
+                match Ui.choose(options)['goto'].split(' '):
+                    case ['place', place_name]:
+                        actor.does = Action.stands_at(world.places[place_name])
 
-                actor.does = Action.talks_to(person)
-                person.state = state
+                    case ['dialogue', path]:
+                        name, state = path.split('.')
+                        person = next(
+                            p for p in place.persons
+                            if p.name.lower() == name.lower()
+                        )
 
+                        actor.does = Action.talks_to(person)
+                        person.state = state
+
+    world = ms.add(Entity(
+        places={}
+    ))
 
     brian = ms.add(Entity(
         name='Brian',
@@ -83,7 +95,7 @@ if __name__ == '__main__':
         lines_state='initial',
     ))
 
-    pub = ms.add(Entity(
+    world.places['pub'] = ms.add(Entity(
         name='The pub',
         interior=yaml.safe_load(
             Path('assets/places/pub.yaml').read_text(encoding='utf8')
@@ -91,10 +103,18 @@ if __name__ == '__main__':
         persons=[brian],
     ))
 
+    world.places['central_street'] = ms.add(Entity(
+        name='Central street',
+        interior=yaml.safe_load(
+            Path('assets/places/central_street.yaml').read_text(encoding='utf8')
+        ),
+        persons=[],
+    ))
+
     you = ms.add(Entity(
         name='Officer Aernerh',
         is_player='True',
-        does=Action.stands_at(pub),
+        does=Action.stands_at(world.places['pub']),
         talks_to=brian,
     ))
 
