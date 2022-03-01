@@ -83,6 +83,13 @@ if __name__ == '__main__':
                         actor.does = Action.talks_to(person)
                         person.state = state
 
+    # Concept:
+    # systems/ contains all the systems
+    # assets/ contains all the game's content
+    # toolkit/ contains all the additional code used between the systems
+    # lib/ contains all the external libraries
+    # metaworld.py is the entrypoint
+
     world = ms.add(Entity(
         places={}
     ))
