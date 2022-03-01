@@ -1,10 +1,11 @@
+name: Pub
 states:
 - line: Паб полупуст. Пара местных жителей охлаждаются пивом после тяжёлой работы.
   options:
   - line: "Выйти на улицу"
-    goto: place central_street
+    does: Action.stands_at(places['Central street'])
 - line: Вы замечаете на себе неловкий взгляд парня в форме милиции. Поймав ваш взгляд, он пытается сделать вид, что рассматривал стеллаж с алкоголем за барной стойкой.
-  if: before dialogue brian.initial
+#  if: before dialogue brian.initial
   options:
   - line: "Подойти"
-    goto: dialogue brian.initial
+    does: Action.talks_to(people['Brian'])
