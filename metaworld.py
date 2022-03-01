@@ -16,7 +16,7 @@ from lib.ecs.ecs import Metasystem, Entity, create_system
 
 class Action:
     stands_at = namedtuple("stands_at", "place")
-    talks_to = namedtuple("talks_to", "person")
+    talks_to = namedtuple("talks_to", "person about")
 
 
 class Ui:
@@ -45,8 +45,9 @@ class Ui:
     @staticmethod
     def describe_interior(interior):
         for state in interior['states']:
-            print(state['line'])
-            print()
+            if 'line' in state:
+                print(state['line'])
+                print()
 
     @staticmethod
     def finish_the_game():
@@ -74,29 +75,21 @@ if __name__ == '__main__':
     @ms.add
     @create_system
     def action_system(world: 'people, places', actor: 'is_player'):
-        def evaluate_script(expression):
-            return eval(expression, {}, {
+        def load_script(expression, self, f=eval):
+            return f(expression, {}, {
                 'places': world.places,
                 'people': world.people,
                 'Action': Action,
                 'mc': world.people['Officer Aernerh'],
+                'self': self,
             })
 
         match actor.does:
-            case Action.talks_to(person):
-                if 'conversation' in person:
-                    dialogue \
-                        = person.dialogue['conversations'][person.conversation]
-                    conversation = person.conversation
-                else:
-                    dialogue, conversation = next(
-                        (person.dialogue['conversations'][entrypoint],
-                         entrypoint)
-                        for entrypoint in person.dialogue['entrypoints']
-                    )
+            case Action.talks_to(person, about):
+                dialogue = person.dialogue['conversations'][about]
 
                 Ui.play_lines(dialogue['lines'])
-                actor.memory['dialogues'].add(f'{person.name}.{conversation}')
+                actor.memory['dialogues'].add(f'{person.name}.{about}')
 
                 if not 'options' in dialogue:
                     actor.does = Action.stands_at(world.places[actor.place])
@@ -104,9 +97,12 @@ if __name__ == '__main__':
 
                 chosen_option = Ui.choose(dialogue['options'])
                 if 'goto' in chosen_option:
-                    person.conversation = chosen_option['goto']
+                    actor.does = Action.talks_to(person, chosen_option['goto'])
                 else:
-                    actor.does = evaluate_script(chosen_option['does'])
+                    actor.does = load_script(chosen_option['does'], person)
+
+                if 'action' in chosen_option:
+                    load_script(chosen_option['action'], person, exec)
 
             case Action.stands_at(place):
                 Ui.describe_interior(place)
@@ -115,11 +111,11 @@ if __name__ == '__main__':
                     option
                     for state in place['states']
                     for option in state.get('options', [])
-                    if ('if' not in option or evaluate_script(option['if']))
-                    and ('if' not in state or evaluate_script(state['if']))
+                    if ('if' not in option or load_script(option['if'], place))
+                    and ('if' not in state or load_script(state['if'], place))
                 ]
 
-                actor.does = evaluate_script(Ui.choose(options)['does'])
+                actor.does = load_script(Ui.choose(options)['does'], place)
 
             case _:
                 assert False

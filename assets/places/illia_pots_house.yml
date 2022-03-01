@@ -1,0 +1,10 @@
+name: Illia Pots's house
+people: !!set {}
+states:
+- options:
+  - line: Выйти на улицу
+    does: Action.stands_at(places['Central street'])
+- if: people['Brian'].intelligence >= 1 and 'Brian.murder_expertise' not in mc.memory['dialogues']
+  options:
+  - line: Спросить Брайана
+    does: Action.talks_to(people['Brian'], 'murder_expertise')

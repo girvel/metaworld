@@ -1,5 +1,6 @@
 name: Brian
 place: Pub
+intelligence: 0
 
 dialogue:
   entrypoints: [initial]
@@ -15,6 +16,7 @@ dialogue:
         goto: description
       - line: "Для начала, я хочу знать как ты смотришь на произошедшее."
         goto: opinion
+        action: self.intelligence += 1
 
     opinion:
       lines:
@@ -36,3 +38,7 @@ dialogue:
       - "Брайен: Три дня назад пожилая женщина убита ударом острого предмета в голову."
       - "Брайен: Убитая - Иллия Потс, жила на краю деревни, травница."
       - "Брайен: Это первое убийство здесь с самого момента окончания Войны."
+
+    murder_expertise:
+      lines:
+      - "Брайен: Это не выглядит как удар топором."

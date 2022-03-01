@@ -11,4 +11,4 @@ states:
   if: "'Brian.initial' not in mc.memory['dialogues']"
   options:
   - line: "Подойти"
-    does: Action.talks_to(people['Brian'])
+    does: Action.talks_to(people['Brian'], 'initial')
