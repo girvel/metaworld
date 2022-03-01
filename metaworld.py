@@ -6,12 +6,17 @@ import yaml
 from lib.ecs.ecs import Metasystem, Entity, create_system
 
 
+# Concept:
+# systems/ contains all the systems
+# assets/ contains all the game's content
+# toolkit/ contains all the additional code used outside the systems
+# lib/ contains all the external libraries
+# metaworld.py is the entrypoint
+
+
 class Action:
     stands_at = namedtuple("stands_at", "place")
     talks_to = namedtuple("talks_to", "person")
-
-
-Memory = namedtuple("Memory", "places dialogues")
 
 
 class Ui:
@@ -52,7 +57,6 @@ class Ui:
 if __name__ == '__main__':
     ms = Metasystem()
 
-
     def travel(person, place):
         person.does = Action.stands_at(place)
         person.place = place.name
@@ -70,11 +74,12 @@ if __name__ == '__main__':
     @ms.add
     @create_system
     def action_system(world: 'people, places', actor: 'is_player'):
-        def evaluate_does(expression):
+        def evaluate_script(expression):
             return eval(expression, {}, {
                 'places': world.places,
                 'people': world.people,
                 'Action': Action,
+                'mc': world.people['Officer Aernerh'],
             })
 
         match actor.does:
@@ -82,13 +87,16 @@ if __name__ == '__main__':
                 if 'conversation' in person:
                     dialogue \
                         = person.dialogue['conversations'][person.conversation]
+                    conversation = person.conversation
                 else:
-                    dialogue = next(
-                        person.dialogue['conversations'][entrypoint]
+                    dialogue, conversation = next(
+                        (person.dialogue['conversations'][entrypoint],
+                         entrypoint)
                         for entrypoint in person.dialogue['entrypoints']
                     )
 
                 Ui.play_lines(dialogue['lines'])
+                actor.memory['dialogues'].add(f'{person.name}.{conversation}')
 
                 if not 'options' in dialogue:
                     actor.does = Action.stands_at(world.places[actor.place])
@@ -98,7 +106,7 @@ if __name__ == '__main__':
                 if 'goto' in chosen_option:
                     person.conversation = chosen_option['goto']
                 else:
-                    actor.does = evaluate_does(chosen_option['does'])
+                    actor.does = evaluate_script(chosen_option['does'])
 
             case Action.stands_at(place):
                 Ui.describe_interior(place)
@@ -107,20 +115,14 @@ if __name__ == '__main__':
                     option
                     for state in place['states']
                     for option in state.get('options', [])
+                    if ('if' not in option or evaluate_script(option['if']))
+                    and ('if' not in state or evaluate_script(state['if']))
                 ]
 
-                actor.does = evaluate_does(Ui.choose(options)['does'])
+                actor.does = evaluate_script(Ui.choose(options)['does'])
 
             case _:
                 assert False
-
-
-    # Concept:
-    # systems/ contains all the systems
-    # assets/ contains all the game's content
-    # toolkit/ contains all the additional code used outside the systems
-    # lib/ contains all the external libraries
-    # metaworld.py is the entrypoint
 
     def load_from(path):
         return (

@@ -8,7 +8,7 @@ states:
   - line: "Выйти на улицу"
     does: Action.stands_at(places['Central street'])
 - line: Вы замечаете на себе неловкий взгляд парня в форме милиции. Поймав ваш взгляд, он пытается сделать вид, что рассматривал стеллаж с алкоголем за барной стойкой.
-#  if: before dialogue brian.initial
+  if: "'Brian.initial' not in mc.memory['dialogues']"
   options:
   - line: "Подойти"
     does: Action.talks_to(people['Brian'])
