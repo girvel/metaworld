@@ -1,4 +1,7 @@
 name: Pub
+people: !!set
+  Brian: null
+  Officer Aernerh: null
 states:
 - line: Паб полупуст. Пара местных жителей охлаждаются пивом после тяжёлой работы.
   options:

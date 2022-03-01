@@ -1,4 +1,5 @@
 name: Central street
+people: !!set {}
 states:
 - line: Вы находитесь на центральной улице.
   options:

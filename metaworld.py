@@ -52,9 +52,31 @@ class Ui:
 if __name__ == '__main__':
     ms = Metasystem()
 
+
+    def travel(person, place):
+        person.does = Action.stands_at(place)
+        person.place = place.name
+        place.people.add(person.name)
+
     @ms.add
     @create_system
-    def action_system(actor: 'does'):
+    def travel_system(traveler: 'does'):
+        # TODO entity field update mechanics
+
+        match traveler.does:
+            case Action.stands_at(place):
+                travel(person, place)
+
+    @ms.add
+    @create_system
+    def action_system(world: 'people, places', actor: 'is_player'):
+        def evaluate_does(expression):
+            return eval(expression, {}, {
+                'places': world.places,
+                'people': world.people,
+                'Action': Action,
+            })
+
         match actor.does:
             case Action.talks_to(person):
                 if 'conversation' in person:
@@ -69,94 +91,60 @@ if __name__ == '__main__':
                 Ui.play_lines(dialogue['lines'])
 
                 if not 'options' in dialogue:
-                    actor.does = Action.stands_at(places[actor.place])
+                    actor.does = Action.stands_at(world.places[actor.place])
                     return
 
                 chosen_option = Ui.choose(dialogue['options'])
                 if 'goto' in chosen_option:
                     person.conversation = chosen_option['goto']
                 else:
-                    does_generator = chosen_option['does']
-
-                    actor.does = eval(
-                        does_generator,
-                        {},
-                        {'places': places, 'people': people, 'Action': Action}
-                    )
+                    actor.does = evaluate_does(chosen_option['does'])
 
             case Action.stands_at(place):
-                Ui.describe_interior(place.interior)
+                Ui.describe_interior(place)
 
                 options = [
                     option
-                    for state in place.interior['states']
+                    for state in place['states']
                     for option in state.get('options', [])
                 ]
 
-                does_generator = Ui.choose(options)['does']
-
-                actor.does = eval(
-                    does_generator,
-                    {},
-                    {'places': places, 'people': people, 'Action': Action}
-                )
+                actor.does = evaluate_does(Ui.choose(options)['does'])
 
             case _:
                 assert False
 
 
-    @ms.add
-    @create_system
-    def travel(traveler: 'does'):
-        # TODO entity field update mechanics
-
-        match traveler.does:
-            case Action.stands_at(place):
-                traveler.place = place.name
-                place.people.add(traveler.name)
-
-
     # Concept:
     # systems/ contains all the systems
     # assets/ contains all the game's content
-    # toolkit/ contains all the additional code used between the systems
+    # toolkit/ contains all the additional code used outside the systems
     # lib/ contains all the external libraries
     # metaworld.py is the entrypoint
 
-    places = ms.add(Entity())
-    people = ms.add(Entity())
+    def load_from(path):
+        return (
+            ms.add(Entity(**yaml.safe_load(p.read_text(encoding='utf8'))))
+            for p in Path(path).iterdir()
+            if p.name.endswith(('.yaml', '.yml'))
+        )
 
-    people['Brian'] = ms.add(Entity(
-        name='Brian',
-        dialogue=yaml.safe_load(
-            Path('assets/characters/brian.yaml').read_text(encoding='utf8')
-        )['dialogue'],
-        place='Pub',
+    world = ms.add(Entity(
+        places={
+            place.name: place for place in load_from('assets/places')
+        },
+        people={
+            person.name: person for person in load_from('assets/people')
+        }
     ))
 
-    places['Pub'] = ms.add(Entity(
-        name='The pub',
-        interior=yaml.safe_load(
-            Path('assets/places/pub.yaml').read_text(encoding='utf8'),
-        ),
-        people={'Brian', 'Officer Aernerh'},
-    ))
+    for place in world.places.values():
+        for person in place.people:
+            travel(world.people[person], place)
 
-    places['Central street'] = ms.add(Entity(
-        name='Central street',
-        interior=yaml.safe_load(
-            Path('assets/places/central_street.yaml').read_text(encoding='utf8')
-        ),
-        people=set(),
-    ))
-
-    people['Officer Aernerh'] = ms.add(Entity(
-        name='Officer Aernerh',
-        is_player='True',
-        does=Action.stands_at(places['Pub']),
-        memory=Memory(set(), set()),
-        place='Pub',
-    ))
-
-    while True:
-        ms.update()
+    try:
+        while True:
+            ms.update()
+    except KeyboardInterrupt:
+        if not __debug__:
+            Ui.finish_the_game()
