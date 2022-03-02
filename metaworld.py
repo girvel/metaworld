@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
         match traveler.does:
             case Action.stands_at(place):
-                travel(person, place)
+                travel(traveler, place)
 
     @ms.add
     @create_system
@@ -93,6 +93,7 @@ if __name__ == '__main__':
 
                 if not 'options' in dialogue:
                     actor.does = Action.stands_at(world.places[actor.place])
+                    print(actor.does)
                     return
 
                 chosen_option = Ui.choose(dialogue['options'])
@@ -139,6 +140,8 @@ if __name__ == '__main__':
     for place in world.places.values():
         for person in place.people:
             travel(world.people[person], place)
+
+    del person, place, world
 
     try:
         while True:

@@ -1,4 +1,5 @@
 name: Officer Aernerh
 is_player: True
+does: False
 memory:
   dialogues: !!set {}
