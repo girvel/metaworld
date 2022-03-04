@@ -13,6 +13,15 @@ from lib.ecs.ecs import Metasystem, Entity, create_system
 # lib/ contains all the external libraries
 # metaworld.py is the entrypoint
 
+# TODO:
+# - unify option mechanics
+# - write illia pots's house
+# - make house states a dict as a people's dialogues
+# - assert that names never match
+# - unify memory for people and places?
+# pro: unification
+# con: the places' description are more temporal and normally repetitive
+# - a book in the pub
 
 class Action:
     stands_at = namedtuple("stands_at", "place")
@@ -107,6 +116,7 @@ if __name__ == '__main__':
 
             case Action.stands_at(place):
                 Ui.describe_interior(place)
+                actor.memory['places'].add(place.name)
 
                 options = [
                     option

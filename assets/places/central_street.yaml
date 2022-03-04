@@ -6,5 +6,5 @@ states:
   - line: Зайти в паб
     does: Action.stands_at(places['Pub'])
   - line: Пойти к дому убитой
-    does: Action.stands_at(places['Illia Pots\'s house'])
+    does: Action.stands_at(places['House of Illia Pots'])
 - line: Она выглядит довольно пусто - большая часть жителей всё ещё работает в полях.

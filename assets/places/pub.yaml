@@ -2,11 +2,19 @@ name: Pub
 people: !!set
   Brian: null
   Officer Aernerh: null
-states:
+
+
+states: # TODO write a full description
 - line: Паб полупуст. Пара местных жителей охлаждаются пивом после тяжёлой работы.
   options:
   - line: "Выйти на улицу"
     does: Action.stands_at(places['Central street'])
+    if: "'Brian.initial' in mc.memory['dialogues']"
+#    if: "'Brian.initial' in mc.memory['dialogues'] and 'Yarn.meeting' in mc.memory['dialogues']"
+#  - line: "Выйти на улицу"
+#    does: Action.talks_to(places['Yarn'], 'politics')
+#    if: "'Brian.initial' in mc.memory['dialogues'] and 'Yarn.politics' not in mc.memory['dialogues']"
+
 - line: Вы замечаете на себе неловкий взгляд парня в форме милиции. Поймав ваш взгляд, он пытается сделать вид, что рассматривал стеллаж с алкоголем за барной стойкой.
   if: "'Brian.initial' not in mc.memory['dialogues']"
   options:
