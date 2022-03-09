@@ -1,13 +1,18 @@
-name: House of Illia Pots
+name: house_of_illia_pots
 people: !!set {}
 states:
-- line: Вы находитесь в прихожей старого обветшалого особняка.
-  options:
-  - line: Выйти на улицу
-    does: Action.stands_at(places['Central street'])
-- line:
-  if: "'House of Illia Pots' not in mc.memory['places']"
-- if: people['Brian'].intelligence >= 1 and 'Brian.murder_expertise' not in mc.memory['dialogues']
-  options:
-  - line: Спросить Брайана
-    does: Action.talks_to(people['Brian'], 'murder_expertise')
+  normal:
+    line: Вы находитесь в прихожей старого обветшалого особняка.
+    options:
+    - line: Выйти на улицу
+      does: Action.stands_at(places.central_street)
+
+  full_description:
+    line:
+    if: "'house_of_illia_pots' not in mc.memory"
+
+  brian_expertise:
+    if: people.brian.intelligence >= 1 and 'brian.murder_expertise' not in mc.memory
+    options:
+    - line: Спросить Брайана
+      does: Action.talks_to(people.brian, 'murder_expertise')

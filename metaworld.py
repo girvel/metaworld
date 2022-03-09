@@ -52,8 +52,8 @@ class Ui:
                 print()
 
     @staticmethod
-    def describe_interior(interior):
-        for state in interior['states']:
+    def describe_interior(states):
+        for state in states:
             if 'line' in state:
                 print(state['line'])
                 print()
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                 dialogue = person.dialogue['conversations'][about]
 
                 Ui.play_lines(dialogue['lines'])
-                actor.memory['dialogues'].add(f'{person.name}.{about}')
+                actor.memory.add(f'{person.name}.{about}')
 
                 if not 'options' in dialogue:
                     actor.does = Action.stands_at(world.places[actor.place])
@@ -115,15 +115,21 @@ if __name__ == '__main__':
                     load_script(chosen_option['action'], person, exec)
 
             case Action.stands_at(place):
-                Ui.describe_interior(place)
-                actor.memory['places'].add(place.name)
+                current_states = {
+                    name: state for name, state in place['states'].items()
+                    if 'if' not in state or load_script(state['if'], place)
+                }
+
+                Ui.describe_interior(current_states)
+
+                for name in current_states:
+                    actor.memory['places'].add('.'.join([place.name, name]))
 
                 options = [
                     option
-                    for state in place['states']
+                    for state in current_states.values()
                     for option in state.get('options', [])
                     if ('if' not in option or load_script(option['if'], place))
-                    and ('if' not in state or load_script(state['if'], place))
                 ]
 
                 actor.does = load_script(Ui.choose(options)['does'], place)
@@ -139,12 +145,12 @@ if __name__ == '__main__':
         )
 
     world = ms.add(Entity(
-        places={
+        places=Entity(**{
             place.name: place for place in load_from('assets/places')
-        },
-        people={
+        }),
+        people=Entity(**{
             person.name: person for person in load_from('assets/people')
-        }
+        })
     ))
 
     for place in world.places.values():

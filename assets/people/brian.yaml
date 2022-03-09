@@ -1,9 +1,8 @@
-name: Brian
-place: Pub
+name: brian
+place: pub
 intelligence: 0
 
 dialogue:
-  entrypoints: [initial]
   conversations:
     initial:
       lines:
