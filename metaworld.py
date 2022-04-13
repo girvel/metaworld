@@ -153,7 +153,7 @@ if __name__ == '__main__':
         })
     ))
 
-    for place in world.places.values():
+    for place in world.places._fields.values():
         for person in place.people:
             travel(world.people[person], place)
 
