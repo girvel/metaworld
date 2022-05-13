@@ -53,7 +53,7 @@ class Ui:
 
     @staticmethod
     def describe_interior(states):
-        for state in states:
+        for _, state in states.items():
             if 'line' in state:
                 print(state['line'])
                 print()
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                 'places': world.places,
                 'people': world.people,
                 'Action': Action,
-                'mc': world.people['Officer Aernerh'],
+                'mc': actor,
                 'self': self,
             })
 
@@ -102,7 +102,6 @@ if __name__ == '__main__':
 
                 if not 'options' in dialogue:
                     actor.does = Action.stands_at(world.places[actor.place])
-                    print(actor.does)
                     return
 
                 chosen_option = Ui.choose(dialogue['options'])
@@ -123,7 +122,7 @@ if __name__ == '__main__':
                 Ui.describe_interior(current_states)
 
                 for name in current_states:
-                    actor.memory['places'].add('.'.join([place.name, name]))
+                    actor.memory.add('.'.join([place.name, name]))
 
                 options = [
                     option
@@ -153,11 +152,11 @@ if __name__ == '__main__':
         })
     ))
 
-    for place in world.places._fields.values():
-        for person in place.people:
-            travel(world.people[person], place)
+    for _, place in world.places:
+        for person_name in place.people:
+            travel(world.people[person_name], place)
 
-    del person, place, world
+    del person_name, place, world
 
     try:
         while True:
