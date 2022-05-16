@@ -72,8 +72,7 @@ if __name__ == '__main__':
         person.place = place.name
         place.people.add(person.name)
 
-    @ms.add
-    @create_system
+    @ms.create_system
     def travel_system(traveler: 'does'):
         # TODO entity field update mechanics
 
@@ -81,8 +80,7 @@ if __name__ == '__main__':
             case Action.stands_at(place):
                 travel(traveler, place)
 
-    @ms.add
-    @create_system
+    @ms.create_system
     def action_system(world: 'people, places', actor: 'is_player'):
         def load_script(expression, self, f=eval):
             return f(expression, {}, {
@@ -138,19 +136,19 @@ if __name__ == '__main__':
 
     def load_from(path):
         return (
-            ms.add(Entity(**yaml.safe_load(p.read_text(encoding='utf8'))))
+            ms.create(**yaml.safe_load(p.read_text(encoding='utf8')))
             for p in Path(path).iterdir()
             if p.name.endswith(('.yaml', '.yml'))
         )
 
-    world = ms.add(Entity(
+    world = ms.create(
         places=Entity(**{
             place.name: place for place in load_from('assets/places')
         }),
         people=Entity(**{
             person.name: person for person in load_from('assets/people')
         })
-    ))
+    )
 
     for _, place in world.places:
         for person_name in place.people:
