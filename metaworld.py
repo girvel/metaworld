@@ -1,8 +1,3 @@
-from collections import namedtuple
-from pathlib import Path
-
-import yaml
-
 from common import Action, travel
 from lib.ecs.ecs import Metasystem, Entity, create_system
 
@@ -19,9 +14,6 @@ from lib.ecs.ecs import Metasystem, Entity, create_system
 # - write illia pots's house
 # - make house states a dict as a npc's dialogues
 # - assert that names never match
-# - unify memory for npc and locations?
-# pro: unification
-# con: the locations' description are more temporal and normally repetitive
 # - a book in the pub
 
 
