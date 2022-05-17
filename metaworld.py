@@ -1,5 +1,5 @@
 from common import Action, travel
-from lib.ecs.ecs import Metasystem, Entity, create_system
+from lib.ecs.ecs import Metasystem
 
 
 # Concept:
