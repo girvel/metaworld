@@ -1,12 +1,12 @@
+!location
 name: central_street
-people: !!set {}
 states:
   normal:
     line: Вы находитесь на центральной улице.
     options:
     - line: Зайти в паб
-      does: Action.stands_at(places.pub)
+      does: Action.stands_at(locations.pub)
     - line: Пойти к дому убитой
-      does: Action.stands_at(places.house_of_illia_pots)
+      does: Action.stands_at(locations.house_of_illia_pots)
   # full_description: TODO
   #  line: Она выглядит довольно пусто - большая часть жителей всё ещё работает в полях.

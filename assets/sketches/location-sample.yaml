@@ -1,6 +1,6 @@
 !location
 name: pub
-people: [brian, aernerh]
+npcs: [brian, aernerh]
 
 
 states: # TODO write a full description
@@ -8,7 +8,7 @@ states: # TODO write a full description
     line: Паб полупуст. Пара местных жителей охлаждаются пивом после тяжёлой работы.
     options:
     - line: Выйти на улицу
-      does: self.will_go_to = places.central_street
+      does: self.will_go_to = locations.central_street
       if: "'brian.initial' in mc.memory"
 
   meet_brian:
@@ -16,4 +16,4 @@ states: # TODO write a full description
     if: "'brian.initial' not in mc.memory"
     options:
     - line: Подойти
-      does: self.will_talk_to = people.brian
+      does: self.will_talk_to = npc.brian
