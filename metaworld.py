@@ -3,6 +3,7 @@ from pathlib import Path
 
 import yaml
 
+from common import Action, travel
 from lib.ecs.ecs import Metasystem, Entity, create_system
 
 
@@ -22,10 +23,6 @@ from lib.ecs.ecs import Metasystem, Entity, create_system
 # pro: unification
 # con: the locations' description are more temporal and normally repetitive
 # - a book in the pub
-
-class Action:
-    stands_at = namedtuple("stands_at", "location")
-    talks_to = namedtuple("talks_to", "npc about")
 
 
 class Ui:
@@ -66,11 +63,6 @@ class Ui:
 
 if __name__ == '__main__':
     ms = Metasystem()
-
-    def travel(npc, location):
-        npc.does = Action.stands_at(location)
-        npc.location = location.name
-        location.npcs.add(npc.name)
 
     @ms.create_system
     def travel_system(traveler: 'does'):
@@ -133,51 +125,6 @@ if __name__ == '__main__':
 
             case _:
                 assert False
-
-    class Location(Entity):
-        def __init__(self, **attributes):
-            super().__init__(**attributes)
-            self.npcs = set(self.npcs) if 'npcs' in self else set()
-
-    class Player(Entity):
-        def __init__(self, **attributes):
-            super().__init__(**attributes)
-            self.is_player = True
-            self.does = False
-            self.memory = set()
-
-    for tag in [Location, Player]:
-        yaml.SafeLoader.add_constructor(
-            '!' + tag.__name__.lower(),
-            (lambda tag_:
-                lambda loader, node:
-                    tag_(**loader.construct_mapping(node, True))
-            )(tag)
-        )
-
-    def load_from(path):
-        return (
-            ms.create(**dict(yaml.safe_load(p.read_text(encoding='utf8'))))
-            for p in Path(path).iterdir()
-            if p.name.endswith(('.yaml', '.yml'))
-        )
-
-    world = ms.create(
-        locations=Entity(**{
-            location.name: location for location in load_from('assets/locations')
-        }),
-        npcs=Entity(**{
-            npc.name: npc for npc in load_from('assets/npc')
-        })
-    )
-
-    npc_name = None
-    location = None
-    for _, location in world.locations:
-        for npc_name in location.npcs:
-            travel(world.npcs[npc_name], location)
-
-    del npc_name, location, world
 
     try:
         while True:
