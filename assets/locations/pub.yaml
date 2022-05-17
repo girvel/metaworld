@@ -1,20 +1,15 @@
+!location
 name: pub
-npcs: !!set
-  brian: null
-  aernerh: null
+npcs: [brian, aernerh]
 
 
-states: # TODO write a full description
+states:  # TODO write a full description
   normal:
     line: Паб полупуст. Пара местных жителей охлаждаются пивом после тяжёлой работы.
     options:
     - line: "Выйти на улицу"
       does: Action.stands_at(locations.central_street)
       if: "'brian.initial' in mc.memory"
-  #    if: "'Brian.initial' in mc.memory['dialogues'] and 'Yarn.meeting' in mc.memory['dialogues']"
-  #  - line: "Выйти на улицу"
-  #    does: Action.talks_to(locations['Yarn'], 'politics')
-  #    if: "'Brian.initial' in mc.memory['dialogues'] and 'Yarn.politics' not in mc.memory['dialogues']"
 
   meet_brian:
     line: Вы замечаете на себе неловкий взгляд парня в форме милиции. Поймав ваш взгляд, он пытается сделать вид, что рассматривал стеллаж с алкоголем за барной стойкой.

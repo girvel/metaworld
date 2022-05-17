@@ -134,9 +134,20 @@ if __name__ == '__main__':
             case _:
                 assert False
 
+    class Location(Entity):
+        def __init__(self, **attributes):
+            super().__init__(**attributes)
+            self.npcs = set(self.npcs) if 'npcs' in self else set()
+
+    for tag in [Location]:
+        yaml.SafeLoader.add_constructor(
+            '!' + tag.__name__.lower(),
+            lambda loader, node: tag(**loader.construct_mapping(node, True))
+        )
+
     def load_from(path):
         return (
-            ms.create(**yaml.safe_load(p.read_text(encoding='utf8')))
+            ms.create(**dict(yaml.safe_load(p.read_text(encoding='utf8'))))
             for p in Path(path).iterdir()
             if p.name.endswith(('.yaml', '.yml'))
         )
@@ -150,11 +161,12 @@ if __name__ == '__main__':
         })
     )
 
+    npc_name = None
     for _, location in world.locations:
-        for person_name in location.npcs:
-            travel(world.npcs[person_name], location)
+        for npc_name in location.npcs:
+            travel(world.npcs[npc_name], location)
 
-    del person_name, location, world
+    del npc_name, location, world
 
     try:
         while True:

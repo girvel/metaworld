@@ -1,5 +1,5 @@
+!location
 name: central_street
-npcs: !!set {}
 states:
   normal:
     line: Вы находитесь на центральной улице.

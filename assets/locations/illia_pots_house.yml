@@ -1,5 +1,5 @@
+!location
 name: house_of_illia_pots
-npcs: !!set {}
 states:
   normal:
     line: Вы находитесь в прихожей старого обветшалого особняка.
