@@ -1,4 +1,2 @@
+!player
 name: aernerh
-is_player: True
-does: False
-memory: !!set {}

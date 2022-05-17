@@ -139,10 +139,20 @@ if __name__ == '__main__':
             super().__init__(**attributes)
             self.npcs = set(self.npcs) if 'npcs' in self else set()
 
-    for tag in [Location]:
+    class Player(Entity):
+        def __init__(self, **attributes):
+            super().__init__(**attributes)
+            self.is_player = True
+            self.does = False
+            self.memory = set()
+
+    for tag in [Location, Player]:
         yaml.SafeLoader.add_constructor(
             '!' + tag.__name__.lower(),
-            lambda loader, node: tag(**loader.construct_mapping(node, True))
+            (lambda tag_:
+                lambda loader, node:
+                    tag_(**loader.construct_mapping(node, True))
+            )(tag)
         )
 
     def load_from(path):
@@ -162,6 +172,7 @@ if __name__ == '__main__':
     )
 
     npc_name = None
+    location = None
     for _, location in world.locations:
         for npc_name in location.npcs:
             travel(world.npcs[npc_name], location)
