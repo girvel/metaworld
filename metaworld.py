@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
         match actor.does:
             case Action.talks_to(npc, about):
-                dialogue = npc.dialogue['conversations'][about]
+                dialogue = npc.dialogue[about]
 
                 Ui.play_lines(dialogue['lines'])
                 actor.memory.add(f'{npc.name}.{about}')
