@@ -1,6 +1,6 @@
 !npc
 name: brian
-place: pub
+location: pub
 intelligence: 0
 
 dialogue:

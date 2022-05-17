@@ -16,16 +16,16 @@ from lib.ecs.ecs import Metasystem, Entity, create_system
 # TODO:
 # - unify option mechanics
 # - write illia pots's house
-# - make house states a dict as a people's dialogues
+# - make house states a dict as a npc's dialogues
 # - assert that names never match
-# - unify memory for people and places?
+# - unify memory for npc and locations?
 # pro: unification
-# con: the places' description are more temporal and normally repetitive
+# con: the locations' description are more temporal and normally repetitive
 # - a book in the pub
 
 class Action:
-    stands_at = namedtuple("stands_at", "place")
-    talks_to = namedtuple("talks_to", "person about")
+    stands_at = namedtuple("stands_at", "location")
+    talks_to = namedtuple("talks_to", "npc about")
 
 
 class Ui:
@@ -67,69 +67,69 @@ class Ui:
 if __name__ == '__main__':
     ms = Metasystem()
 
-    def travel(person, place):
-        person.does = Action.stands_at(place)
-        person.place = place.name
-        place.people.add(person.name)
+    def travel(npc, location):
+        npc.does = Action.stands_at(location)
+        npc.location = location.name
+        location.npcs.add(npc.name)
 
     @ms.create_system
     def travel_system(traveler: 'does'):
         # TODO entity field update mechanics
 
         match traveler.does:
-            case Action.stands_at(place):
-                travel(traveler, place)
+            case Action.stands_at(location):
+                travel(traveler, location)
 
     @ms.create_system
-    def action_system(world: 'people, places', actor: 'is_player'):
+    def action_system(world: 'npcs, locations', actor: 'is_player'):
         def load_script(expression, self, f=eval):
             return f(expression, {}, {
-                'places': world.places,
-                'people': world.people,
+                'locations': world.locations,
+                'npc': world.npcs,
                 'Action': Action,
                 'mc': actor,
                 'self': self,
             })
 
         match actor.does:
-            case Action.talks_to(person, about):
-                dialogue = person.dialogue['conversations'][about]
+            case Action.talks_to(npc, about):
+                dialogue = npc.dialogue['conversations'][about]
 
                 Ui.play_lines(dialogue['lines'])
-                actor.memory.add(f'{person.name}.{about}')
+                actor.memory.add(f'{npc.name}.{about}')
 
                 if not 'options' in dialogue:
-                    actor.does = Action.stands_at(world.places[actor.place])
+                    actor.does = Action.stands_at(world.locations[actor.location])
                     return
 
                 chosen_option = Ui.choose(dialogue['options'])
                 if 'goto' in chosen_option:
-                    actor.does = Action.talks_to(person, chosen_option['goto'])
+                    actor.does = Action.talks_to(npc, chosen_option['goto'])
                 else:
-                    actor.does = load_script(chosen_option['does'], person)
+                    actor.does = load_script(chosen_option['does'], npc)
 
                 if 'action' in chosen_option:
-                    load_script(chosen_option['action'], person, exec)
+                    load_script(chosen_option['action'], npc, exec)
 
-            case Action.stands_at(place):
+            case Action.stands_at(location):
                 current_states = {
-                    name: state for name, state in place['states'].items()
-                    if 'if' not in state or load_script(state['if'], place)
+                    name: state for name, state in location['states'].items()
+                    if 'if' not in state or load_script(state['if'], location)
                 }
 
                 Ui.describe_interior(current_states)
 
                 for name in current_states:
-                    actor.memory.add('.'.join([place.name, name]))
+                    actor.memory.add('.'.join([location.name, name]))
 
                 options = [
                     option
                     for state in current_states.values()
                     for option in state.get('options', [])
-                    if ('if' not in option or load_script(option['if'], place))
+                    if ('if' not in option or load_script(option['if'], location))
                 ]
 
-                actor.does = load_script(Ui.choose(options)['does'], place)
+                actor.does = load_script(Ui.choose(options)['does'], location)
 
             case _:
                 assert False
@@ -142,19 +142,19 @@ if __name__ == '__main__':
         )
 
     world = ms.create(
-        places=Entity(**{
-            place.name: place for place in load_from('assets/places')
+        locations=Entity(**{
+            location.name: location for location in load_from('assets/locations')
         }),
-        people=Entity(**{
-            person.name: person for person in load_from('assets/people')
+        npcs=Entity(**{
+            npc.name: npc for npc in load_from('assets/npc')
         })
     )
 
-    for _, place in world.places:
-        for person_name in place.people:
-            travel(world.people[person_name], place)
+    for _, location in world.locations:
+        for person_name in location.npcs:
+            travel(world.npcs[person_name], location)
 
-    del person_name, place, world
+    del person_name, location, world
 
     try:
         while True:
