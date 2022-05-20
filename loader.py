@@ -20,6 +20,18 @@ class Player(Entity):
         self.memory = set()
 
 
+def code(source, kind):
+    def freezed_script(self, player, world):
+        return kind(source, {}, {
+            'locations': world.locations,
+            'npcs': world.npcs,
+            'self': self,
+            'player': player,
+        })
+
+    return freezed_script
+
+
 for tag in [Location, Player]:
     yaml.SafeLoader.add_constructor(
         '!' + tag.__name__.lower(),
@@ -28,6 +40,16 @@ for tag in [Location, Player]:
                 tag_(**loader.construct_mapping(node, True))
         )(tag)
     )
+
+yaml.SafeLoader.add_constructor(
+    '!script',
+    lambda loader, node: code(loader.construct_scalar(node), exec)
+)
+
+yaml.SafeLoader.add_constructor(
+    '!condition',
+    lambda loader, node: code(loader.construct_scalar(node), eval)
+)
 
 
 def load_from(path, ms):
@@ -41,15 +63,17 @@ def load_from(path, ms):
 def load_assets(ms):
     world = ms.create(
         locations=Entity(**{
-            location.name: location for location in load_from('assets/locations')
+            location.name: location
+            for location in load_from('assets/locations', ms)
         }),
         npcs=Entity(**{
-            npc.name: npc for npc in load_from('assets/npc')
+            npc.name: npc for npc in load_from('assets/npc', ms)
         })
     )
 
     for _, location in world.locations:
-        for npc_name in location.npcs:
-            travel(world.npcs[npc_name], location)
+        location.npcs = {world.npcs[name] for name in location.npcs}
+        for npc in location.npcs:
+            npc.location = location
 
     return world
