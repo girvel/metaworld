@@ -1,0 +1,58 @@
+import common
+import ui
+
+
+def travel(traveler: 'will_go_to'):
+    common.travel(traveler, traveler.will_go_to)
+    del traveler.will_go_to
+
+
+def speech(talker: 'will_talk_to', world: 'npcs, locations'):
+    npc = talker.will_talk_to
+
+    if 'will_talk_about' in talker:
+        about = talker.will_talk_about
+        del talker.will_talk_about
+    else:
+        about = 'initial'
+
+    while True:
+        dialogue = npc.dialogue[about]
+        ui.play_lines(dialogue['lines'], {
+            'player': talker,
+            'self': talker.will_talk_to,
+            'world': world,
+        })
+
+        talker.memory.add(f'{npc.name}.{about}')
+
+        if 'options' not in dialogue:
+            break
+
+        about = ui.choose(dialogue['options'])['goto']
+
+    del talker.will_talk_to
+
+
+def decision_making(player: 'is_player', world: 'npcs, locations'):
+    current_states = {
+        name: state for name, state in player.location.states.items()
+        if 'if' not in state or state['if'](player.location, player, world)
+    }
+
+    ui.describe_interior(current_states)
+
+    for state_name in current_states:
+        player.memory.add(f'{player.location.name}.{state_name}')
+
+    options = [
+        option
+        for state in current_states.values()
+        for option in state.get('options', [])
+        if ('if' not in option or option['if'](player.location, player, world))
+    ]
+
+    ui.choose(options)['does'](player.location, player, world)
+
+
+list = [travel, speech, decision_making]

@@ -5,14 +5,14 @@ states:
     line: Вы находитесь в прихожей старого обветшалого особняка.
     options:
     - line: Выйти на улицу
-      does: Action.stands_at(locations.central_street)
+      does: !script player.will_go_to = locations.central_street
 
   full_description:
-    line:
-    if: "'house_of_illia_pots' not in mc.memory"
+    line: Вы видите дом впервые.
+    if: !condition "'house_of_illia_pots.full_description' not in player.memory"
 
   brian_expertise:
-    if: npc.brian.intelligence >= 1 and 'brian.murder_expertise' not in mc.memory
+    if: !condition npcs.brian.intelligence >= 1 and 'brian.murder_expertise' not in player.memory
     options:
     - line: Спросить Брайана
-      does: Action.talks_to(npc.brian, 'murder_expertise')
+      does: !script player.will_talk_to = npcs.brian; player.will_talk_about = 'murder_expertise'
