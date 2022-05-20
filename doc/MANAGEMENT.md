@@ -24,3 +24,19 @@
 2. Describe features you want to see in context of different interface layers going from the user's layer to the developer's one.
 
 3. Aggregate features to tasks.
+
+## Issue handling procedure
+
+- Each issue contains detailed description potentially understandable by other developers.
+
+- Development of each issue should be done in a separate branch. Naming should be done in a separate case from the words of issue's title. For example, issue "Extend processing of YAML" could be named as `extend-yaml-processing`.
+
+- Merge commit should be done in this format:
+
+```
+<Issue's title> (closes #<issue's number>)
+
+<Issue's description; github's `- []` checkboxes are replaced with markdown's `-` bulletpoints>
+```
+
+- No squash when merge
