@@ -7,6 +7,8 @@ class Action:
 
 
 def travel(npc, location):
-    npc.does = Action.stands_at(location)
-    npc.location = location.name
-    location.npcs.add(npc.name)
+    if npc.location is not None:
+        npc.location.npcs.remove(npc)
+
+    npc.location = location
+    location.npcs.add(npc)

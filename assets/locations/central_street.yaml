@@ -5,8 +5,8 @@ states:
     line: Вы находитесь на центральной улице.
     options:
     - line: Зайти в паб
-      does: Action.stands_at(locations.pub)
+      does: !script player.will_go_to = locations.pub
     - line: Пойти к дому убитой
-      does: Action.stands_at(locations.house_of_illia_pots)
+      does: !script player.will_go_to = locations.house_of_illia_pots
   # full_description: TODO
   #  line: Она выглядит довольно пусто - большая часть жителей всё ещё работает в полях.
