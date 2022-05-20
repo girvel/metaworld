@@ -8,7 +8,7 @@
 
 - Also there can be a **minor** milestone to contain all the issues that appear during the **major** and should be fixed before its end. 
 
-## Review & design storm procedure
+## Review & design storm
 
 0. Project should be split to discrete **interface layers** on user-developer continuum. F. e. for metaworld these are:
 
@@ -25,7 +25,7 @@
 
 3. Aggregate features to tasks.
 
-## Issue handling procedure
+## Issue handling
 
 - Each issue contains detailed description potentially understandable by other developers.
 
