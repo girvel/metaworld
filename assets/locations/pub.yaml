@@ -4,17 +4,29 @@ npcs: [brian, aernerh]
 
 
 states:  # TODO write a full description
-  normal:
-    line: Паб полупуст. Пара местных жителей охлаждаются пивом после тяжёлой работы.
+  first_time:
+    line: You stand in a small clean pub that takes up half of the building's first floor. Wooden floors, thick walls of grey stone, simple but neat furniture -- the same as in every house in town.
+    if: "'pub.first_time' not in player.memory"
+
+  bartender:
+    line: Bartender is pretending to act normally, but you catch his eye for a moment. There could not be much strangers here if your appearance causes such interest.
+    if: "'central_street.normal' not in player.memory"
     options:
-    - line: Выйти на улицу
+    - line: Go talk to bartender
+      does: |
+        player.will_talk_to = npcs.bartender
+        player.will_talk_about = "meeting"
+
+  normal:
+    line: The pub is half empty. A couple of farmers cool themselves with beer.
+    options:
+    - line: Leave the pub
       does: player.will_go_to = locations.central_street
       if: "'brian.initial' in player.memory"
 
   meet_brian:
-    line: Вы замечаете на себе неловкий взгляд парня в форме милиции. Поймав ваш взгляд, он пытается сделать вид, что рассматривал стеллаж с алкоголем за барной стойкой.
+    line: A young guy in police uniform is looking at you.
     if: "'brian.initial' not in player.memory"
     options:
-    - line: Подойти
+    - line: Go talk to policeman
       does: player.will_talk_to = npcs.brian
-      if: "'brian.initial' not in player.memory"

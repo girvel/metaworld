@@ -6,38 +6,40 @@ intelligence: 0
 dialogue:
   initial:
     lines:
-    - Брайен: Здравствуйте, сэр. Вы офицер Эрнер, не так ли?
-    - Офицер Эрнер: Да. Я могу вам как-то помочь?
-    - Брайен: Меня зовут Брайен, меня прислали сюда за два дня до вас. Я ваш помощник.
-    - Офицер Эрнер: Хм, ну ладно.
+    - Brian: Hello, sir. You're officer aernerh, am I right?
+    - Officer Aernerh: Yes. How can I help you?
+    - Brian: My name's Brian, I was sent here two days ago to help you with investigation.
+    - Officer Aernerh: Hm, okay.
     options:
-    - line: Для начала, мне потребуется чёткое описание всех фактов.
+    - line: To begin with, I need a clear description of the events.
       goto: description
-    - line: Для начала, я хочу знать как ты смотришь на произошедшее.
+    - line: To begin with, I need to know what do you think about the case.
       goto: opinion
 
   opinion:
     lines:
     - !script self.intelligence += 1
-    - Брайен: Простите, что я *думаю*?
-    - Офицер Эрнер: А ты ничего не думаешь? Тишайшее село на краю мира, три с половиной человека, убита старушка у которой нет ни гроша за душой.
-    - Брайен: Извините, просто это первый случай, когда кто-либо интересовался что я *думаю*.
+    - Brian: Excuse me, what do I *think*?
+    - Officer Aernerh: You do not have an opinion? The case is rather strange - it is a first murder here since the War.
+    - Brian: Sorry, it's kind of like the first time an officer asks me what do I *think*.
+    - Brian: And people here call it `the Invasion`, not `the War`.
     - ...
-    - Брайен: Мне кажется... Всё произошедшее точно не складывается у меня в голове.
+    - Brian: I think...
+    - Brian: It doesn't really make sense.
     - ...
-    - Брайен: Старушка не такая невинная как кажется.
-    - Брайен: Ведьма, сэр.
-    - Брайен: Навела порчу на мужское хозяйство лесоруба и тот её зарубил.
+    - Brian: She isn't as innocent as we think.
+    - Brian: A witch, sir.
+    - Brian: She cursed a lumberjack's junk and he murdered her with an axe as an act of revenge.
     - ...
-    - Офицер Эрнер (смеясь): Смелая теория.
+    - Officer Aernerh (laughing): That is a nice theory.
 
   description:
     lines:
-    - Брайен: Да, сэр.
-    - Брайен: Три дня назад пожилая женщина убита ударом острого предмета в голову.
-    - Брайен: Убитая - Иллия Потс, жила на краю деревни, травница.
-    - Брайен: Это первое убийство здесь с самого момента окончания Войны.
+    - Brian: Yes, sir.
+    - Brian: Three days ago elderly woman was killed with a strike in the head.
+    - Brian: Her name is Illia Pots, she lived on the edge of the village, she is a herb healer.
+    - Brian: This is a first murder since the end of the War.
 
   murder_expertise:
     lines:
-    - Брайен: Это не выглядит как удар топором.
+    - Brian: It doesn't look like an axe.
