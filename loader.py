@@ -2,7 +2,6 @@ from pathlib import Path
 
 import yaml
 
-from common import travel
 from lib.ecs.ecs import Entity
 
 
@@ -10,6 +9,17 @@ class Location(Entity):
     def __init__(self, **attributes):
         super().__init__(**attributes)
         self.npcs = set(self.npcs) if 'npcs' in self else set()
+
+        for state in self.states.values():
+            if isinstance(state.get('if', None), str):
+                state['if'] = code(state['if'], eval)
+
+            for option in state.get('options', []):
+                if isinstance(option.get('does', None), str):
+                    option['does'] = code(option['does'], exec)
+
+                if isinstance(option.get('if', None), str):
+                    option['if'] = code(option['if'], eval)
 
 
 class Player(Entity):
@@ -28,6 +38,8 @@ class Npc(Entity):
             return (isinstance(d, dict)
                 and ': '.join(tuple(d.items())[0])
                 or d)
+
+        # convert(self, 'dialogue.*.lines.*', dict_to_line)
 
         for piece in self.dialogue.values():
             piece['lines'] = map(dict_to_line, piece['lines'])
