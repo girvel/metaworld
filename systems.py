@@ -55,7 +55,7 @@ def decision_making(player: 'is_player', world: 'npcs, locations'):
         option
         for state in current_states.values()
         for option in state.get('options', [])
-        if ('if' not in option or option['if'](player.location, player, world))
+        if 'if' not in option or option['if'](player.location, player, world)
     ]
 
     ui.choose(options)['does'](player.location, player, world)

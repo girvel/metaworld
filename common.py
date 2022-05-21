@@ -1,6 +1,3 @@
-from collections import namedtuple
-
-
 def travel(npc, location):
     if npc.location is not None:
         npc.location.npcs.remove(npc)
