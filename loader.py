@@ -20,6 +20,19 @@ class Player(Entity):
         self.memory = set()
 
 
+class Npc(Entity):
+    def __init__(self, **attributes):
+        super().__init__(**attributes)
+
+        def dict_to_line(d):
+            return (isinstance(d, dict)
+                and ': '.join(tuple(d.items())[0])
+                or d)
+
+        for piece in self.dialogue.values():
+            piece['lines'] = map(dict_to_line, piece['lines'])
+
+
 def code(source, kind):
     def freezed_script(self, player, world):
         return kind(source, {}, {
@@ -32,7 +45,7 @@ def code(source, kind):
     return freezed_script
 
 
-for tag in [Location, Player]:
+for tag in [Location, Player, Npc]:
     yaml.SafeLoader.add_constructor(
         '!' + tag.__name__.lower(),
         (lambda tag_:

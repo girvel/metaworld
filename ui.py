@@ -15,9 +15,6 @@ def play_lines(lines, script_args):
     for line in lines:
         if callable(line):
             line(**script_args)
-        elif isinstance(line, dict) and len(line) == 1:
-            for speaker, line_ in line.items():
-                print(f'{speaker}: {line_}', end='')
         else:
             print(line)
 
