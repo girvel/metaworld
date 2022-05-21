@@ -69,8 +69,10 @@ dialogue:
       self.opinion -= 15
       player.will_go_to = locations.central_street
       npcs.brian.will_go_to = locations.central_street
-      player.will_talk_to = npcs.brian
-      player.will_talk_about = 'meeting_outside'
+
+      if "brian.meeting" not in player.memory:
+        player.will_talk_to = npcs.brian
+        player.will_talk_about = 'meeting_outside'
 
   meeting_3:
     lines:

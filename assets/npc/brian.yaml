@@ -4,12 +4,12 @@ location: pub
 intelligence: 0
 
 dialogue:
-  meeting:
+  meeting_inside:
     lines:
     - Brian: Hello, sir. You're officer Aernerh, am I right?
     options:
     - line: Yes. How can I help you?
-      goto: meeting_2
+      goto: meeting
 
   meeting_outside:
     lines:
@@ -19,9 +19,9 @@ dialogue:
     - Brian: Nobody likes when we call the War `the War` though.
     options:
     - line: Okay.
-      goto: meeting_2
+      goto: meeting
 
-  meeting_2:
+  meeting:
     lines:
     - Brian: My name's Brian, I was sent here two days ago to help you with investigation.
     - Officer Aernerh: Hm, okay.
@@ -57,4 +57,28 @@ dialogue:
 
   murder_expertise:
     lines:
-    - Brian: It doesn't look like an axe.
+    - Brian: It couldn't be an axe, it is too accurate and too deep.
+    - Brian: It couldn't be anything, if you ask me.
+    options:
+    - line: Thank you, Brian.
+      goto: plus_intelligence
+    - line: Okay.
+      goto: end
+
+  end: 
+    lines: []
+
+  plus_intelligence:
+    lines:
+    - !script self.intelligence += 1
+
+  corpse:
+    lines:
+    - Brian: Sorry, sir, I wasn't able to move her yet.
+    - Officer Aernerh: I do not mean you. Why nobody in town has not stooped to move her body to the proper place?
+    - Officer Aernerh: There should be a doctor or a sheriff or someone else who should take care of dead bodies.
+    - Brian: There is a sheriff here, but he can't enter the house without permission of the owner.
+    - Brian: Usually a relative invites sheriff to move the body, but she had none.
+    - Officer Aernerh: So they legally can never enter and move her body?
+    - Brian: After a week it is going to smell so badly that a sheriff would have a cause to enter without permission.
+    - Brian: Or we can move her closer to the window so it will be possible to see her from outside.

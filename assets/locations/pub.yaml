@@ -24,7 +24,7 @@ states:  # TODO write a full description
     options:
     - line: Leave the pub
       does: player.will_go_to = locations.central_street
-      if: "'brian.initial' in player.memory"
+      if: "'brian.meeting' in player.memory"
 
   meet_brian:
     line: A young guy in police uniform is looking at you.
@@ -33,4 +33,4 @@ states:  # TODO write a full description
     - line: Go talk to policeman
       does: |
         player.will_talk_to = npcs.brian
-        player.will_talk_about = 'meeting'
+        player.will_talk_about = 'meeting_inside'

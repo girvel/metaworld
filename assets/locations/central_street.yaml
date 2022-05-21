@@ -4,13 +4,12 @@ states:
   normal:
     line: You are on a central street.
     options:
-    - line: Go to the pub
+    - line: Enter the pub
       does: player.will_go_to = locations.pub
       if: npcs.bartender.opinion > -10
     - line: Go south
-      does: player.will_go_to = locations.south_streets
+      does: player.will_go_to = locations.rabor_avenue
 
-#  first_time:
-#    line:
-  # full_description: TODO
-  #  line: Она выглядит довольно пусто - большая часть жителей всё ещё работает в полях.
+  first_time:
+    line: It is big for such a small town. There are not a lot of people around -- most of them are still working.
+    if: "'central_street.first_time' not in player.memory"
