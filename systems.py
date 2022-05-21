@@ -18,18 +18,22 @@ def speech(talker: 'will_talk_to', world: 'npcs, locations'):
 
     while True:
         dialogue = npc.dialogue[about]
-        ui.play_lines(dialogue['lines'], {
+        context = {
             'player': talker,
             'self': talker.will_talk_to,
             'world': world,
-        })
+        }
+        ui.play_lines(dialogue['lines'], context)
 
         talker.memory.add(f'{npc.name}.{about}')
 
         if 'options' not in dialogue:
             break
 
-        about = ui.choose(dialogue['options'])['goto']
+        about = ui.choose([
+            o for o in dialogue['options']
+            if 'if' not in o or o['if'](**context)
+        ])['goto']
 
     del talker.will_talk_to
 

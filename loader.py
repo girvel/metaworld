@@ -44,6 +44,10 @@ class Npc(Entity):
         for piece in self.dialogue.values():
             piece['lines'] = map(dict_to_line, piece['lines'])
 
+            for option in piece.get('options', []):
+                if isinstance(option.get('if', None), str):
+                    option['if'] = code(option['if'], eval)
+
 
 def code(source, kind):
     def freezed_script(self, player, world):
