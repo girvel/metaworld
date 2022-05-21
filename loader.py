@@ -42,7 +42,7 @@ class Npc(Entity):
         # convert(self, 'dialogue.*.lines.*', dict_to_line)
 
         for piece in self.dialogue.values():
-            piece['lines'] = map(dict_to_line, piece['lines'])
+            piece['lines'] = list(map(dict_to_line, piece['lines']))
 
             for option in piece.get('options', []):
                 if isinstance(option.get('if', None), str):
