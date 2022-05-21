@@ -1,0 +1,13 @@
+!location
+name: rabor_avenue
+states:
+  normal:
+    line: You find yourself on a street with a sign `Rabor avenue`.
+    options:
+    - line: Enter Illia's house
+      does: player.will_go_to = locations.house_of_illia_pots
+    - line: Return to the center
+      does: player.will_go_to = locations.central_street
+
+  first_time:
+    line: There is a line of aspens on the side of the road, so it probably qualifies as an avenue.

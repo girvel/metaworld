@@ -9,6 +9,7 @@ def travel(traveler: 'will_go_to'):
 
 def speech(talker: 'will_talk_to', world: 'npcs, locations'):
     npc = talker.will_talk_to
+    del talker.will_talk_to
 
     if 'will_talk_about' in talker:
         about = talker.will_talk_about
@@ -18,23 +19,28 @@ def speech(talker: 'will_talk_to', world: 'npcs, locations'):
 
     while True:
         dialogue = npc.dialogue[about]
-        ui.play_lines(dialogue['lines'], {
+        context = {
             'player': talker,
-            'self': talker.will_talk_to,
+            'self': npc,
             'world': world,
-        })
+        }
+        ui.play_lines(dialogue['lines'], context)
 
         talker.memory.add(f'{npc.name}.{about}')
 
         if 'options' not in dialogue:
             break
 
-        about = ui.choose(dialogue['options'])['goto']
-
-    del talker.will_talk_to
+        about = ui.choose([
+            o for o in dialogue['options']
+            if 'if' not in o or o['if'](**context)
+        ])['goto']
 
 
 def decision_making(player: 'is_player', world: 'npcs, locations'):
+    if 'will_talk_to' in player:
+        return
+
     current_states = {
         name: state for name, state in player.location.states.items()
         if 'if' not in state or state['if'](player.location, player, world)
@@ -49,7 +55,7 @@ def decision_making(player: 'is_player', world: 'npcs, locations'):
         option
         for state in current_states.values()
         for option in state.get('options', [])
-        if ('if' not in option or option['if'](player.location, player, world))
+        if 'if' not in option or option['if'](player.location, player, world)
     ]
 
     ui.choose(options)['does'](player.location, player, world)

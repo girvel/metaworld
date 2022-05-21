@@ -2,6 +2,7 @@ from pathlib import Path
 
 import yaml
 
+import common
 from lib.ecs.ecs import Entity
 
 
@@ -29,6 +30,10 @@ class Player(Entity):
         self.does = False
         self.memory = set()
 
+    def talk_to(self, to, about):
+        self.will_talk_to = to
+        self.will_talk_about = about
+
 
 class Npc(Entity):
     def __init__(self, **attributes):
@@ -42,7 +47,11 @@ class Npc(Entity):
         # convert(self, 'dialogue.*.lines.*', dict_to_line)
 
         for piece in self.dialogue.values():
-            piece['lines'] = map(dict_to_line, piece['lines'])
+            piece['lines'] = list(map(dict_to_line, piece['lines']))
+
+            for option in piece.get('options', []):
+                if isinstance(option.get('if', None), str):
+                    option['if'] = code(option['if'], eval)
 
 
 def code(source, kind):
@@ -52,6 +61,7 @@ def code(source, kind):
             'npcs': world.npcs,
             'self': self,
             'player': player,
+            'common': common,
         })
 
     return freezed_script
