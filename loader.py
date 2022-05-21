@@ -2,6 +2,7 @@ from pathlib import Path
 
 import yaml
 
+import common
 from lib.ecs.ecs import Entity
 
 
@@ -28,6 +29,10 @@ class Player(Entity):
         self.is_player = True
         self.does = False
         self.memory = set()
+
+    def talk_to(self, to, about):
+        self.will_talk_to = to
+        self.will_talk_about = about
 
 
 class Npc(Entity):
@@ -56,6 +61,7 @@ def code(source, kind):
             'npcs': world.npcs,
             'self': self,
             'player': player,
+            'common': common,
         })
 
     return freezed_script

@@ -4,10 +4,25 @@ location: pub
 intelligence: 0
 
 dialogue:
-  initial:
+  meeting:
     lines:
-    - Brian: Hello, sir. You're officer aernerh, am I right?
-    - Officer Aernerh: Yes. How can I help you?
+    - Brian: Hello, sir. You're officer Aernerh, am I right?
+    options:
+    - line: Yes. How can I help you?
+      goto: meeting_2
+
+  meeting_outside:
+    lines:
+    - Brian: Sir, you are officer Aernerh, aren't you?
+    - Officer Aernerh: Yes, I am.
+    - Brian: Don't be too upset, not all of the people here are so sensitive.
+    - Brian: Nobody likes when we call the War `the War` though.
+    options:
+    - line: Okay.
+      goto: meeting_2
+
+  meeting_2:
+    lines:
     - Brian: My name's Brian, I was sent here two days ago to help you with investigation.
     - Officer Aernerh: Hm, okay.
     options:

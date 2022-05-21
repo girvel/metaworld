@@ -10,7 +10,9 @@ states:  # TODO write a full description
 
   bartender:
     line: Bartender is pretending to act normally, but you catch his eye for a moment. There could not be much strangers here if your appearance causes such interest.
-    if: "'central_street.normal' not in player.memory"
+    if: >
+      'central_street.normal' not in player.memory
+      and 'bartender.meeting' not in player.memory
     options:
     - line: Go talk to bartender
       does: |
@@ -26,7 +28,9 @@ states:  # TODO write a full description
 
   meet_brian:
     line: A young guy in police uniform is looking at you.
-    if: "'brian.initial' not in player.memory"
+    if: "'brian.meeting' not in player.memory"
     options:
     - line: Go talk to policeman
-      does: player.will_talk_to = npcs.brian
+      does: |
+        player.will_talk_to = npcs.brian
+        player.will_talk_about = 'meeting'

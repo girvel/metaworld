@@ -2,11 +2,15 @@
 name: central_street
 states:
   normal:
-    line: Вы находитесь на центральной улице.
+    line: You are on a central street.
     options:
-    - line: Зайти в паб
-      does: !script player.will_go_to = locations.pub
-    - line: Пойти к дому убитой
-      does: !script player.will_go_to = locations.house_of_illia_pots
+    - line: Go to the pub
+      does: player.will_go_to = locations.pub
+      if: npcs.bartender.opinion > -10
+    - line: Go south
+      does: player.will_go_to = locations.south_streets
+
+#  first_time:
+#    line:
   # full_description: TODO
   #  line: Она выглядит довольно пусто - большая часть жителей всё ещё работает в полях.

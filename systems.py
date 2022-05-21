@@ -9,6 +9,7 @@ def travel(traveler: 'will_go_to'):
 
 def speech(talker: 'will_talk_to', world: 'npcs, locations'):
     npc = talker.will_talk_to
+    del talker.will_talk_to
 
     if 'will_talk_about' in talker:
         about = talker.will_talk_about
@@ -20,7 +21,7 @@ def speech(talker: 'will_talk_to', world: 'npcs, locations'):
         dialogue = npc.dialogue[about]
         context = {
             'player': talker,
-            'self': talker.will_talk_to,
+            'self': npc,
             'world': world,
         }
         ui.play_lines(dialogue['lines'], context)
@@ -35,10 +36,11 @@ def speech(talker: 'will_talk_to', world: 'npcs, locations'):
             if 'if' not in o or o['if'](**context)
         ])['goto']
 
-    del talker.will_talk_to
-
 
 def decision_making(player: 'is_player', world: 'npcs, locations'):
+    if 'will_talk_to' in player:
+        return
+
     current_states = {
         name: state for name, state in player.location.states.items()
         if 'if' not in state or state['if'](player.location, player, world)
