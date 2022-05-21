@@ -8,13 +8,13 @@ states:  # TODO write a full description
     line: Паб полупуст. Пара местных жителей охлаждаются пивом после тяжёлой работы.
     options:
     - line: Выйти на улицу
-      does: !script player.will_go_to = locations.central_street
-      if: !condition "'brian.initial' in player.memory"
+      does: player.will_go_to = locations.central_street
+      if: "'brian.initial' in player.memory"
 
   meet_brian:
     line: Вы замечаете на себе неловкий взгляд парня в форме милиции. Поймав ваш взгляд, он пытается сделать вид, что рассматривал стеллаж с алкоголем за барной стойкой.
-    if: !condition "'brian.initial' not in player.memory"
+    if: "'brian.initial' not in player.memory"
     options:
     - line: Подойти
-      does: !script player.will_talk_to = npcs.brian
-      if: !condition "'brian.initial' not in player.memory"
+      does: player.will_talk_to = npcs.brian
+      if: "'brian.initial' not in player.memory"

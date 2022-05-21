@@ -2,7 +2,6 @@ from pathlib import Path
 
 import yaml
 
-from common import travel
 from lib.ecs.ecs import Entity
 
 
@@ -11,6 +10,17 @@ class Location(Entity):
         super().__init__(**attributes)
         self.npcs = set(self.npcs) if 'npcs' in self else set()
 
+        for state in self.states.values():
+            if isinstance(state.get('if', None), str):
+                state['if'] = code(state['if'], eval)
+
+            for option in state.get('options', []):
+                if isinstance(option.get('does', None), str):
+                    option['does'] = code(option['does'], exec)
+
+                if isinstance(option.get('if', None), str):
+                    option['if'] = code(option['if'], eval)
+
 
 class Player(Entity):
     def __init__(self, **attributes):
@@ -18,6 +28,21 @@ class Player(Entity):
         self.is_player = True
         self.does = False
         self.memory = set()
+
+
+class Npc(Entity):
+    def __init__(self, **attributes):
+        super().__init__(**attributes)
+
+        def dict_to_line(d):
+            return (isinstance(d, dict)
+                and ': '.join(tuple(d.items())[0])
+                or d)
+
+        # convert(self, 'dialogue.*.lines.*', dict_to_line)
+
+        for piece in self.dialogue.values():
+            piece['lines'] = map(dict_to_line, piece['lines'])
 
 
 def code(source, kind):
@@ -32,7 +57,7 @@ def code(source, kind):
     return freezed_script
 
 
-for tag in [Location, Player]:
+for tag in [Location, Player, Npc]:
     yaml.SafeLoader.add_constructor(
         '!' + tag.__name__.lower(),
         (lambda tag_:
