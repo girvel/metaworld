@@ -3,6 +3,7 @@ from pathlib import Path
 import yaml
 
 import common
+import ui
 from lib.ecs.ecs import Entity
 
 
@@ -30,9 +31,29 @@ class Player(Entity):
         self.does = False
         self.memory = set()
 
-    def talk_to(self, to, about):
-        self.will_talk_to = to
-        self.will_talk_about = about
+    @staticmethod
+    def mind(self, world):
+        if 'will_talk_to' in self:
+            return
+
+        current_states = {
+            name: state for name, state in self.location.states.items()
+            if 'if' not in state or state['if'](self.location, self, world)
+        }
+
+        ui.describe_interior(current_states)
+
+        for state_name in current_states:
+            self.memory.add(f'{self.location.name}.{state_name}')
+
+        options = [
+            option
+            for state in current_states.values()
+            for option in state.get('options', [])
+            if 'if' not in option or option['if'](self.location, self, world)
+        ]
+
+        ui.choose(options, skip=(True, {'does': lambda *_: None}))['does'](self.location, self, world)
 
 
 class Npc(Entity):
@@ -52,6 +73,11 @@ class Npc(Entity):
             for option in piece.get('options', []):
                 if isinstance(option.get('if', None), str):
                     option['if'] = code(option['if'], eval)
+
+        if 'mind' in self:
+            self.mind = (lambda mind:
+                lambda self, world: mind(self, None, world)
+            )(self.mind)
 
 
 def code(source, kind):
