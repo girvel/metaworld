@@ -1,6 +1,6 @@
 !location
 name: pub
-npcs: [brian, aernerh]
+npcs: [brian, aernerh, bartender]
 
 
 states:  # TODO write a full description

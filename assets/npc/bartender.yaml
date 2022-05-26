@@ -53,14 +53,14 @@ dialogue:
     - Officer Aernerh: Have you been there?
     - Bartender: Yes. It has been over twenty-five years, I believe.
     options:
-    - line: So, before the War?
+    - line: So, before the Second War?
       goto: rage
-    - line: So, before the Invasion?
+    - line: So, before the Second Invasion?
       goto: meeting_3
 
   rage:
     lines:
-    - Bartender: The War?
+    - Bartender: the Second War?
     - Bartender: What is the...
     - Bartender (looks at you with suspicion): ...
     - Bartender (angrily): Get out!

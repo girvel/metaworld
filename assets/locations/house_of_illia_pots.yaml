@@ -21,6 +21,7 @@ states:
       if: > 
         npcs.brian.intelligence >= 1 
         and 'brian.murder_expertise' not in player.memory
+        and npcs.brian in self.npcs
     - line: Why is she still here?
       does: |
         player.will_talk_to = npcs.brian

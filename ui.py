@@ -1,4 +1,6 @@
-def choose(options):
+def choose(options, skip=(False, None)):
+    can_be_skipped, default = skip
+
     print()
     for i, option in enumerate(options):
         print(f'{i + 1}. {option["line"]}')
@@ -8,10 +10,9 @@ def choose(options):
             o = options[int(input("> ")) - 1]
             print()
             return o
-        except ValueError:
-            pass
-        except IndexError:
-            pass
+        except (ValueError, IndexError):
+            if can_be_skipped:
+                return default
 
 
 def play_lines(lines, script_args):

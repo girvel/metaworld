@@ -3,6 +3,10 @@ name: brian
 location: pub
 intelligence: 0
 
+mind: !script |
+  if npcs.aernerh.location != self.location:
+    self.will_go_to = npcs.aernerh.location
+
 dialogue:
   meeting_inside:
     lines:
@@ -16,7 +20,7 @@ dialogue:
     - Brian: Sir, you are officer Aernerh, aren't you?
     - Officer Aernerh: Yes, I am.
     - Brian: Don't be too upset, not all of the people here are so sensitive.
-    - Brian: Nobody likes when we call the War `the War` though.
+    - Brian: Nobody likes when we call the Second War `the Second War` though.
     options:
     - line: Okay.
       goto: meeting
@@ -35,9 +39,9 @@ dialogue:
     lines:
     - !script self.intelligence += 1
     - Brian: Excuse me, what do I *think*?
-    - Officer Aernerh: You do not have an opinion? The case is rather strange - it is a first murder here since the War.
+    - Officer Aernerh: You do not have an opinion? The case is rather strange - it is a first murder here since the Second War.
     - Brian: Sorry, it's kind of like the first time an officer asks me what do I *think*.
-    - Brian: And people here call it `the Invasion`, not `the War`.
+    - Brian: And people here call it `the Second Invasion`, not `the Second War`.
     - ...
     - Brian: I think...
     - Brian: It doesn't really make sense.
@@ -53,7 +57,7 @@ dialogue:
     - Brian: Yes, sir.
     - Brian: Three days ago elderly woman was killed with a strike in the head.
     - Brian: Her name is Illia Pots, she lived on the edge of the village, she is a herb healer.
-    - Brian: This is a first murder since the end of the War.
+    - Brian: This is a first murder since the end of the Second War.
 
   murder_expertise:
     lines:
