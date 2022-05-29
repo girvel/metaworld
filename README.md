@@ -12,7 +12,16 @@ Metaworld is a non-visual novel - an RPG with quest/novel-like text interface. T
 
 1. Download [zip-archive with source code](https://github.com/girvel/metaworld/archive/refs/heads/master.zip)
 2. Extract it
-3. Launch install.bat
+3. Install python 3.10
+4. Install requirements with 
+   ```bash
+   py -3.10 -m pip install -r requirements.txt
+   ```
+6. Launch the game with 
+   ```
+   py -3.10 -O metaworld.py
+   ``` 
+   (`-O` is used to optimize performance and disable debugging features)
 
 Now you can launch the game with launch.bat.
 
