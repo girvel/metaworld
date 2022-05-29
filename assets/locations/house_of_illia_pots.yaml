@@ -5,7 +5,7 @@ states:
     line: You are in a hall of an old mansion.
     options:
     - line: Go outside
-      does: player.will_go_to = locations.central_street
+      does: player.will_go_to = locations.rabor_avenue
 
   first_time:
     line: It is full of dust and porcelain.
@@ -26,4 +26,6 @@ states:
       does: |
         player.will_talk_to = npcs.brian
         player.will_talk_about = 'corpse'
-      if: "'brian.corpse' not in player.memory"
+      if: > 
+        'brian.corpse' not in player.memory
+        and npcs.brian in self.npcs
