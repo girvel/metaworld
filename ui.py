@@ -20,18 +20,22 @@ def play_lines(lines, script_args):
         if callable(line):
             line(**script_args)
         else:
-            print(line, end='')
-            if not __debug__:
-                input()
-            else:
-                print()
+            deliver(line)
+
+
+def deliver(line):
+    print(line, end='')
+    if not __debug__:
+        input()
+    else:
+        print()
 
 
 def describe_interior(states):
     print()
     for _, state in states.items():
         if 'line' in state:
-            print(state['line'])
+            deliver(state['line'])
             print()
 
 
