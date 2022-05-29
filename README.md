@@ -1,6 +1,6 @@
 # Metaworld
 
-Metaworld is a non-visual novel - an RPG with quest/novel-like text interface. It is done like that because I am writer/programmer and I wanted to focus on what I do best. So what my game lacks in graphics, it makes up in features.
+Metaworld is a non-visual novel - an RPG with quest/novel-like text interface. The game focuses on writing/programming-driven features.
 
 # Features
 
