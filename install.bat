@@ -8,3 +8,5 @@ del python-installer.exe
 
 echo "Installing libraries"
 py -3.10 -m pip install -r requirements.txt
+
+echo "Installation finished"
