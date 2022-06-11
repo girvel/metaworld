@@ -1,3 +1,4 @@
+from functools import wraps
 from pathlib import Path
 
 import yaml
@@ -5,6 +6,47 @@ import yaml
 import common
 import ui
 from lib.ecs.ecs import Entity
+
+
+def convert(convertee, path, conversion, expected_type=None):
+    return _convert(
+        convertee,
+        path.split('.'),
+        lambda x:
+            conversion(x)
+            if expected_type is None or isinstance(x, expected_type)
+            else x
+    )
+
+
+def _convert(convertee, path, conversion):
+    head, tail = path[0], path[1:]
+
+    if len(tail) == 0:
+        if head == '*':
+            if isinstance(convertee, dict):
+                for key, value in convertee.items():
+                    convertee[key] = conversion(value)
+
+            elif isinstance(convertee, list):
+                for i, value in enumerate(convertee):
+                    convertee[i] = conversion(value)
+
+            else:
+                raise TypeError("Can iterate only through dict or list, sorry.")
+        else:
+            convertee[head] = conversion(convertee[head])
+    else:
+        if head == '*':
+            if isinstance(convertee, dict):
+                for value in convertee.values():
+                    _convert(value, tail, conversion)
+
+            if isinstance(convertee, list):
+                for value in convertee:
+                    _convert(value, tail, conversion)
+        else:
+            _convert(convertee[head], tail, conversion)
 
 
 class Location(Entity):
@@ -65,10 +107,10 @@ class Npc(Entity):
                 and ': '.join(tuple(d.items())[0])
                 or d)
 
-        # convert(self, 'dialogue.*.lines.*', dict_to_line)
+        convert(self, 'dialogue.*.lines.*', lambda x: ': '.join(tuple(x.items())[0]), dict)
 
         for piece in self.dialogue.values():
-            piece['lines'] = list(map(dict_to_line, piece['lines']))
+            # piece['lines'] = list(map(dict_to_line, piece['lines']))
 
             for option in piece.get('options', []):
                 if isinstance(option.get('if', None), str):
