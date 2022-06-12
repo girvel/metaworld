@@ -6,7 +6,7 @@ opinion: 0
 dialogue:
   meeting:
     lines:
-    - Officer Aernerh: Hi.
+    - Officer Errner: Hi.
     - Bartender: Hello, sir. What can I get you?
     options:
     - line: I will have a beer, please.
@@ -48,9 +48,9 @@ dialogue:
   meeting_2:
     lines:
     - Bartender: So, you come from far?
-    - Officer Aernerh: Yes, from Sevenhold, actually.
+    - Officer Errner: Yes, from Sevenhold, actually.
     - Bartender: Oh, my brother-in-law lives in Sevenhold. It is a very fine city.
-    - Officer Aernerh: Have you been there?
+    - Officer Errner: Have you been there?
     - Bartender: Yes. It has been over twenty-five years, I believe.
     options:
     - line: So, before the Second War?
@@ -77,6 +77,6 @@ dialogue:
   meeting_3:
     lines:
     - Bartender: Of course. You'd visit your neighbour after something like that?
-    - Officer Aernerh: Probably not...
+    - Officer Errner: Probably not...
     - Bartender: Exactly.
     - Bartender: Well, I have go get back to work.

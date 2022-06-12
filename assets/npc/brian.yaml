@@ -4,21 +4,21 @@ location: pub
 intelligence: 0
 
 mind: |
-  if npcs.aernerh.location != self.location:
-    self.will_go_to = npcs.aernerh.location
+  if npcs.errner.location != self.location:
+    self.will_go_to = npcs.errner.location
 
 dialogue:
   meeting_inside:
     lines:
-    - Brian: Hello, sir. You're officer Aernerh, am I right?
+    - Brian: Hello, sir. You're officer Errner, am I right?
     options:
     - line: Yes. How can I help you?
       goto: meeting
 
   meeting_outside:
     lines:
-    - Brian: Sir, you are officer Aernerh, aren't you?
-    - Officer Aernerh: Yes, I am.
+    - Brian: Sir, you are officer Errner, aren't you?
+    - Officer Errner: Yes, I am.
     - Brian: Don't be too upset, not all of the people here are so sensitive.
     - Brian: Nobody likes when we call the Second War `the Second War` though.
     options:
@@ -28,7 +28,7 @@ dialogue:
   meeting:
     lines:
     - Brian: My name's Brian, I was sent here two days ago to help you with investigation.
-    - Officer Aernerh: Hm, okay.
+    - Officer Errner: Hm, okay.
     options:
     - line: To begin with, I need a clear description of the events.
       goto: description
@@ -39,7 +39,7 @@ dialogue:
     lines:
     - !script self.intelligence += 1
     - Brian: Excuse me, what do I *think*?
-    - Officer Aernerh: You do not have an opinion? The case is rather strange - it is a first murder here since the Second War.
+    - Officer Errner: You do not have an opinion? The case is rather strange - it is a first murder here since the Second War.
     - Brian: Sorry, it's kind of like the first time an officer asks me what do I *think*.
     - Brian: And people here call it `the Second Invasion`, not `the Second War`.
     - ...
@@ -50,7 +50,7 @@ dialogue:
     - Brian: A witch, sir.
     - Brian: She cursed a lumberjack's junk and he murdered her with an axe as an act of revenge.
     - ...
-    - Officer Aernerh (laughing): That is a nice theory.
+    - Officer Errner (laughing): That is a nice theory.
 
   description:
     lines:
@@ -79,10 +79,10 @@ dialogue:
   corpse:
     lines:
     - Brian: Sorry, sir, I wasn't able to move her yet.
-    - Officer Aernerh: I do not mean you. Why nobody in town has not stooped to move her body to the proper place?
-    - Officer Aernerh: There should be a doctor or a sheriff or someone else who should take care of dead bodies.
+    - Officer Errner: I do not mean you. Why nobody in town has not stooped to move her body to the proper place?
+    - Officer Errner: There should be a doctor or a sheriff or someone else who should take care of dead bodies.
     - Brian: There is a sheriff here, but he can't enter the house without permission of the owner.
     - Brian: Usually a relative invites sheriff to move the body, but she had none.
-    - Officer Aernerh: So they legally can never enter and move her body?
+    - Officer Errner: So they legally can never enter and move her body?
     - Brian: After a week it is going to smell so badly that a sheriff would have a cause to enter without permission.
     - Brian: Or we can move her closer to the window so it will be possible to see her from outside.
