@@ -33,7 +33,9 @@ def _convert(convertee, path, conversion):
                 convertee[key] = conversion(value)
 
         case [head]:
-            convertee[head] = conversion(convertee[head])
+            assert not isinstance(head, list)
+            if head in convertee:
+                convertee[head] = conversion(convertee[head])
 
         case ['*', *tail]:
             assert isinstance(convertee, Union[dict, list]), \
@@ -47,7 +49,9 @@ def _convert(convertee, path, conversion):
                 _convert(value, tail, conversion)
 
         case [head, *tail]:
-            _convert(convertee[head], tail, conversion)
+            assert not isinstance(head, list)
+            if head in convertee:
+                _convert(convertee[head], tail, conversion)
 
 
 class Location(Entity):
@@ -55,16 +59,9 @@ class Location(Entity):
         super().__init__(**attributes)
         self.npcs = set(self.npcs) if 'npcs' in self else set()
 
-        for state in self.states.values():
-            if isinstance(state.get('if', None), str):
-                state['if'] = code(state['if'], eval)
-
-            for option in state.get('options', []):
-                if isinstance(option.get('does', None), str):
-                    option['does'] = code(option['does'], exec)
-
-                if isinstance(option.get('if', None), str):
-                    option['if'] = code(option['if'], eval)
+        convert(self, 'states.*.if', condition, str)
+        convert(self, 'states.*.options.*.does', script, str)
+        convert(self, 'states.*.options.*.if', condition, str)
 
 
 class Player(Entity):
@@ -103,24 +100,11 @@ class Npc(Entity):
     def __init__(self, **attributes):
         super().__init__(**attributes)
 
-        def dict_to_line(d):
-            return (isinstance(d, dict)
-                and ': '.join(tuple(d.items())[0])
-                or d)
-
-        convert(self, 'dialogue.*.lines.*', lambda x: ': '.join(tuple(x.items())[0]), dict)
-
-        for piece in self.dialogue.values():
-            # piece['lines'] = list(map(dict_to_line, piece['lines']))
-
-            for option in piece.get('options', []):
-                if isinstance(option.get('if', None), str):
-                    option['if'] = code(option['if'], eval)
-
-        if 'mind' in self:
-            self.mind = (lambda mind:
-                lambda self, world: mind(self, None, world)
-            )(self.mind)
+        unpack_dict = lambda d: tuple(d.items())[0]
+        convert(self, 'dialogue.*.lines.*', lambda x: ': '.join(unpack_dict(x)), dict)
+        convert(self, 'dialogue.*.options.*.if', condition, str)
+        convert(self, 'mind', script, str)
+        convert(self, 'mind', lambda m: lambda self, world: m(self, None, world))
 
 
 def code(source, kind):
@@ -134,6 +118,10 @@ def code(source, kind):
         })
 
     return freezed_script
+
+
+condition = lambda x: code(x, eval)
+script = lambda x: code(x, exec)
 
 
 for tag in [Location, Player, Npc]:

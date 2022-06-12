@@ -3,7 +3,7 @@ name: brian
 location: pub
 intelligence: 0
 
-mind: !script |
+mind: |
   if npcs.aernerh.location != self.location:
     self.will_go_to = npcs.aernerh.location
 
