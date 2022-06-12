@@ -57,7 +57,7 @@ def _convert(convertee, path, conversion):
 class Location(Entity):
     def __init__(self, **attributes):
         super().__init__(**attributes)
-        self.npcs = set(self.npcs) if 'npcs' in self else set()
+        self.npcs = set()
 
         convert(self, 'states.*.if', condition, str)
         convert(self, 'states.*.options.*.does', script, str)
@@ -68,7 +68,6 @@ class Player(Entity):
     def __init__(self, **attributes):
         super().__init__(**attributes)
         self.is_player = True
-        self.does = False
         self.memory = set()
 
     @staticmethod
@@ -163,9 +162,9 @@ def load_assets(ms):
         })
     )
 
-    for _, location in world.locations:
-        location.npcs = {world.npcs[name] for name in location.npcs}
-        for npc in location.npcs:
-            npc.location = location
+    for _, npc in world.npcs:
+        location = world.locations[npc.location]
+        location.npcs.add(npc)
+        npc.location = location
 
     return world
