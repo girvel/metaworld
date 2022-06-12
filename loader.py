@@ -1,5 +1,5 @@
-from functools import wraps
 from pathlib import Path
+from typing import Union
 
 import yaml
 
@@ -20,32 +20,33 @@ def convert(convertee, path, conversion, expected_type=None):
 
 
 def _convert(convertee, path, conversion):
-    head, tail = path[0], path[1:]
+    match path:
+        case ['*']:
+            assert isinstance(convertee, Union[dict, list]), \
+                "Can iterate only through dict or list, sorry."
 
-    if len(tail) == 0:
-        if head == '*':
-            if isinstance(convertee, dict):
-                for key, value in convertee.items():
-                    convertee[key] = conversion(value)
+            for key, value in (
+                convertee.items()
+                if isinstance(convertee, dict)
+                else enumerate(convertee)
+            ):
+                convertee[key] = conversion(value)
 
-            elif isinstance(convertee, list):
-                for i, value in enumerate(convertee):
-                    convertee[i] = conversion(value)
-
-            else:
-                raise TypeError("Can iterate only through dict or list, sorry.")
-        else:
+        case [head]:
             convertee[head] = conversion(convertee[head])
-    else:
-        if head == '*':
-            if isinstance(convertee, dict):
-                for value in convertee.values():
-                    _convert(value, tail, conversion)
 
-            if isinstance(convertee, list):
-                for value in convertee:
-                    _convert(value, tail, conversion)
-        else:
+        case ['*', *tail]:
+            assert isinstance(convertee, Union[dict, list]), \
+                "Can iterate only through dict or list, sorry."
+
+            for value in (
+                convertee.values()
+                if isinstance(convertee, dict)
+                else convertee
+            ):
+                _convert(value, tail, conversion)
+
+        case [head, *tail]:
             _convert(convertee[head], tail, conversion)
 
 
