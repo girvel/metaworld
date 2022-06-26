@@ -148,10 +148,10 @@ def load(path, ms):
     assert path.exists()
 
     if path.is_dir():
-        result = Entity(**{
-            entity.name: entity
-            for entity in (
-                load(p, ms)
+        return Entity(**{
+            entity['name', file_name]: entity
+            for file_name, entity in (
+                (p.stem, load(p, ms))
                 for p in path.iterdir()
                 if p.suffix in ('.yaml', '.yml') or p.is_dir()
             )
@@ -161,14 +161,14 @@ def load(path, ms):
             **dict(yaml.safe_load(path.read_text(encoding='utf8'))),
         )
     else:
-        result = Entity(content=path.read_text(encoding='utf8'))
+        result = ms.create(content=path.read_text(encoding='utf8'))
 
     result.name = path.stem
     return result
 
 
 def load_assets(ms):
-    world = load('assets', ms)
+    world = ms.create(**dict(load('assets', ms)))
 
     for _, npc in world.npcs:
         location = world.locations[npc.location]
