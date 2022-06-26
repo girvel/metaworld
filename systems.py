@@ -11,7 +11,8 @@ def speech(talker: 'will_talk_to', world: 'npcs, locations'):
     npc = talker.will_talk_to
     del talker.will_talk_to
 
-    assert talker.location == npc.location, "Distant speech is forbidden"
+    # assert talker.location == npc.location, "Distant speech is forbidden"
+    # TODO fix on continuity milestone
 
     if 'will_talk_about' in talker:
         about = talker.will_talk_about
