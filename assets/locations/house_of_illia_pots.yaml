@@ -9,7 +9,8 @@ states:
 
   first_time:
     line: It is full of dust and porcelain.
-    if: "'house_of_illia_pots.first_time' not in player.memory"
+    if: >
+      'house_of_illia_pots.first_time' not in player.memory
 
   corpse:
     line: You see a corpse of an old lady lying on the floor. The head is sliced vertically from a forehead to the jaw. It smells.
@@ -21,11 +22,11 @@ states:
       if: > 
         npcs.brian.intelligence >= 1 
         and 'brian.murder_expertise' not in player.memory
-#        and npcs.brian in self.npcs
+        and npcs.brian in self.npcs
     - line: Why is she still here?
       does: |
         player.will_talk_to = npcs.brian
         player.will_talk_about = 'corpse'
       if: > 
         'brian.corpse' not in player.memory
-#        and npcs.brian in self.npcs
+        and npcs.brian in self.npcs
