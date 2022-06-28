@@ -4,3 +4,9 @@ def travel(npc, location):
 
     npc.location = location
     location.npcs.add(npc)
+
+
+def wait(clock, delta):
+    starting_time = clock.current_time
+    while (clock.current_time - starting_time) < delta:
+        yield

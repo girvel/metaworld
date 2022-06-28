@@ -69,6 +69,7 @@ class Player(Entity):
         super().__init__(**attributes)
         self.is_player = True
         self.memory = set()
+        self.business = None
 
     @staticmethod
     def mind(self, world):
@@ -98,6 +99,7 @@ class Player(Entity):
 class Npc(Entity):
     def __init__(self, **attributes):
         super().__init__(**attributes)
+        self.business = None
 
         unpack_dict = lambda d: tuple(d.items())[0]
         convert(self, 'dialogue.*.lines.*', lambda x: ': '.join(unpack_dict(x)), dict)
