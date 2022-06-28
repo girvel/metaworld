@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import common
 import ui
 
@@ -44,4 +46,8 @@ def decision_making(sapient: 'mind', world: 'npcs, locations'):
     sapient.mind(sapient, world)
 
 
-list = [travel, speech, decision_making]
+def time(clock: 'current_time'):
+    clock.current_time += timedelta(seconds=1)
+
+
+list = [travel, speech, decision_making, time]
