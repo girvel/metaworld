@@ -143,24 +143,32 @@ yaml.SafeLoader.add_constructor(
 )
 
 
-def load_from(path, ms):
-    return (
-        ms.create(**dict(yaml.safe_load(p.read_text(encoding='utf8'))))
-        for p in Path(path).iterdir()
-        if p.name.endswith(('.yaml', '.yml'))
-    )
+def load(path, ms):
+    path = Path(path)
+    assert path.exists()
+
+    if path.is_dir():
+        return Entity(**{
+            entity['name', file_name]: entity
+            for file_name, entity in (
+                (p.stem, load(p, ms))
+                for p in path.iterdir()
+                if p.suffix in ('.yaml', '.yml') or p.is_dir()
+            )
+        })
+    elif path.suffix in ('.yaml', '.yml'):
+        result = ms.create(
+            **dict(yaml.safe_load(path.read_text(encoding='utf8'))),
+        )
+    else:
+        result = ms.create(content=path.read_text(encoding='utf8'))
+
+    result.name = path.stem
+    return result
 
 
 def load_assets(ms):
-    world = ms.create(
-        locations=Entity(**{
-            location.name: location
-            for location in load_from('assets/locations', ms)
-        }),
-        npcs=Entity(**{
-            npc.name: npc for npc in load_from('assets/npc', ms)
-        })
-    )
+    world = ms.create(**dict(load('assets', ms)))
 
     for _, npc in world.npcs:
         location = world.locations[npc.location]
