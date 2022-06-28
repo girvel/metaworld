@@ -10,11 +10,10 @@ list = []
 @list.append
 def travel(traveler: 'will_go_to', clock: 'current_time'):
     traveler.business = 'traveling'
-    destination = traveler.will_go_to
     yield from common.wait(clock, timedelta(seconds=30))
 
     traveler.business = None
-    common.travel(traveler, destination)
+    common.travel(traveler, traveler.will_go_to)
     del traveler.will_go_to
 
 
@@ -22,10 +21,9 @@ def travel(traveler: 'will_go_to', clock: 'current_time'):
 def speech(
     talker: 'will_talk_to',
     world: 'npcs, locations',
-    clock: 'current_time'
+    clock: 'current_time',
 ):
     while talker.business is not None: yield
-
     yield from common.wait(clock, timedelta(seconds=5))
 
     npc = talker.will_talk_to
@@ -39,6 +37,7 @@ def speech(
     else:
         about = 'initial'
 
+    amount_of_lines = 0
     while True:
         dialogue = npc.dialogue[about]
         context = {
@@ -47,6 +46,7 @@ def speech(
             'world': world,
         }
         ui.play_lines(dialogue['lines'], context)
+        amount_of_lines += len(dialogue['lines'])
 
         talker.memory.add(f'{npc.name}.{about}')
 
@@ -58,13 +58,19 @@ def speech(
             if 'if' not in o or o['if'](**context)
         ])['goto']
 
+    yield from common.wait(clock, timedelta(seconds=30 * amount_of_lines))
+
 
 @list.append
-def decision_making(sapient: 'mind', world: 'npcs, locations'):
+def decision_making(
+    sapient: 'mind',
+    world: 'npcs, locations',
+    clock: 'current_time',
+):
     while sapient.business is not None: yield
+    yield from common.wait(clock, timedelta(seconds=5))
 
     sapient.mind(sapient, world)
-    pass
 
 
 @list.append
