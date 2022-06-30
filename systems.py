@@ -68,7 +68,7 @@ def decision_making(
     clock: 'current_time',
 ):
     while sapient.business is not None: yield
-    yield from common.wait(clock, timedelta(seconds=5))
+    yield from common.wait(clock, sapient.reaction_time)
 
     sapient.mind(sapient, world)
 

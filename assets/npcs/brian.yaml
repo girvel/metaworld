@@ -3,6 +3,7 @@ name: brian
 location: pub
 intelligence: 0
 
+reaction_time: !dt 00:00:01
 mind: |
   if 'will_go_to' in npcs.errner:
     self.will_go_to = npcs.errner.will_go_to

@@ -2,3 +2,4 @@
 name: errner
 coins: 15
 location: pub
+reaction_time: !dt 00:00:05

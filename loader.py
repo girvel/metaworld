@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 from typing import Union
 
@@ -108,6 +109,11 @@ class Npc(Entity):
         convert(self, 'mind', lambda m: lambda self, world: m(self, None, world))
 
 
+def dt(string):
+    h, m, s = map(int, string.split(':', maxsplit=3))
+    return timedelta(hours=h, minutes=m, seconds=s)
+
+
 def code(source, kind):
     def freezed_script(self, player, world):
         return kind(source, {}, {
@@ -124,6 +130,8 @@ def code(source, kind):
 condition = lambda x: code(x, eval)
 script = lambda x: code(x, exec)
 
+
+yaml.SafeLoader.add_constructor('!dt', lambda loader, node: dt(loader.construct_scalar(node)))
 
 for tag in [Location, Player, Npc]:
     yaml.SafeLoader.add_constructor(
