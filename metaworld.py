@@ -1,6 +1,6 @@
 import loader
 import ui
-from lib.ecs.ecs import Metasystem
+from lib.ecs.ecs import Metasystem, create_system
 import systems
 
 
@@ -8,7 +8,7 @@ if __name__ == '__main__':
     ms = Metasystem()
 
     for system in systems.list:
-        ms.create_system(system)
+        ms.add(create_system(system))
 
     loader.load_assets(ms)
 
