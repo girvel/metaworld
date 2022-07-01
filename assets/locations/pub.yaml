@@ -1,4 +1,4 @@
-!location
+!Location
 name: pub
 
 
@@ -15,8 +15,7 @@ states:  # TODO write a full description
     options:
     - line: Go talk to bartender
       does: |
-        player.will_talk_to = npcs.bartender
-        player.will_talk_about = "meeting"
+        player.talk_to(npcs.bartender, "meeting")
 
   normal:
     line: The pub is half empty. A couple of farmers cool themselves with beer.
@@ -31,5 +30,4 @@ states:  # TODO write a full description
     options:
     - line: Go talk to policeman
       does: |
-        player.will_talk_to = npcs.brian
-        player.will_talk_about = 'meeting_inside'
+        player.talk_to(npcs.brian, "meeting_inside")
