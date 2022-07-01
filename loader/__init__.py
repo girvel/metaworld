@@ -6,160 +6,19 @@ import yaml
 
 import ui
 from lib.ecs.ecs import OwnedEntity, Entity
+from loader import factories
 
 
-def convert(convertee, path, conversion, expected_type=None):
-    return _convert(
-        convertee,
-        path.split('.'),
-        lambda x:
-            conversion(x)
-            if expected_type is None or isinstance(x, expected_type)
-            else x
-    )
-
-
-def _convert(convertee, path, conversion):
-    match path:
-        case ['*']:
-            assert isinstance(convertee, Union[dict, list]), \
-                "Can iterate only through dict or list, sorry."
-
-            for key, value in (
-                convertee.items()
-                if isinstance(convertee, dict)
-                else enumerate(convertee)
-            ):
-                convertee[key] = conversion(value)
-
-        case [head]:
-            assert not isinstance(head, list)
-            if head in convertee:
-                convertee[head] = conversion(convertee[head])
-
-        case ['*', *tail]:
-            assert isinstance(convertee, Union[dict, list]), \
-                "Can iterate only through dict or list, sorry."
-
-            for value in (
-                convertee.values()
-                if isinstance(convertee, dict)
-                else convertee
-            ):
-                _convert(value, tail, conversion)
-
-        case [head, *tail]:
-            assert not isinstance(head, list)
-            if head in convertee:
-                _convert(convertee[head], tail, conversion)
-
-
-class Location(OwnedEntity):
-    def __init__(self, **attributes):
-        super().__init__(**attributes)
-        self.npcs = set()
-
-        convert(self, 'states.*.if', condition, str)
-        convert(self, 'states.*.options.*.does', script, str)
-        convert(self, 'states.*.options.*.if', condition, str)
-
-
-class Player(OwnedEntity):
-    def __init__(self, **attributes):
-        super().__init__(**attributes)
-        self.is_player = True
-        self.memory = set()
-        self.business = None
-
-    @staticmethod
-    def mind(self, world):
-        if 'will_talk_to' in self:
-            return
-
-        current_states = {
-            name: state for name, state in self.location.states.items()
-            if 'if' not in state or state['if'](self.location, self, world)
-        }
-
-        ui.describe_interior(current_states)
-
-        for state_name in current_states:
-            self.memory.add(f'{self.location.name}.{state_name}')
-
-        options = [
-            option
-            for state in current_states.values()
-            for option in state.get('options', [])
-            if 'if' not in option or option['if'](self.location, self, world)
-        ]
-
-        ui.choose(options, skip=(True, {'does': lambda *_: None}))['does'](self.location, self, world)
-
-    def talk_to(self, target, about):
-        self.will_talk_to = target
-        self.will_talk_about = about
-
-
-class Npc(OwnedEntity):
-    def __init__(self, **attributes):
-        super().__init__(**attributes)
-        self.business = None
-
-        unpack_dict = lambda d: tuple(d.items())[0]
-        convert(self, 'dialogue.*.lines.*', lambda x: ': '.join(unpack_dict(x)), dict)
-        convert(self, 'dialogue.*.options.*.if', condition, str)
-        convert(self, 'mind', script, str)
-        convert(self, 'mind', lambda m: lambda self, world: m(self, None, world))
-
-
-class Clock(OwnedEntity):
-    def wait(self, delta):
-        starting_time = self.current_time
-        while (self.current_time - starting_time) < delta:
-            yield
-
-
-def dt(string):
-    h, m, s = map(int, string.split(':', maxsplit=3))
-    return timedelta(hours=h, minutes=m, seconds=s)
-
-
-def code(source, kind):
-    def freezed_script(self, player, world):
-        return kind(source, {}, {
-            'locations': world.locations,
-            'npcs': world.npcs,
-            'self': self,
-            'player': player,
-        })
-
-    return freezed_script
-
-
-condition = lambda x: code(x, eval)
-script = lambda x: code(x, exec)
-
-
-yaml.SafeLoader.add_constructor('!dt', lambda loader, node: dt(loader.construct_scalar(node)))
-
-for tag in [Location, Player, Npc, OwnedEntity, Clock]:
+for factory in factories.__all__:
     yaml.SafeLoader.add_constructor(
-        '!' + tag.__name__,
-        (lambda tag_:
-            lambda loader, node:
-                tag_(**loader.construct_mapping(node, True))
-        )(tag)
+        '!' + factory.__name__,
+        (lambda factory_:
+            lambda loader, node: (factory_.__name__.islower()
+                and factory_(loader.construct_scalar(node))
+                or factory_(**loader.construct_mapping(node, True))
+            )
+        )(factory)
     )
-
-yaml.SafeLoader.add_constructor(
-    '!script',
-    lambda loader, node: code(loader.construct_scalar(node), exec)
-)
-
-yaml.SafeLoader.add_constructor(
-    '!condition',
-    lambda loader, node: code(loader.construct_scalar(node), eval)
-)
 
 
 def load(path, ms):

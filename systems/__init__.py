@@ -3,7 +3,7 @@ from .speech import speech
 from .time import time
 from .travel import travel
 
-order = [
+__all__ = [
     travel,
     speech,
     decision_making,

@@ -7,7 +7,7 @@ import systems
 if __name__ == '__main__':
     ms = Metasystem()
 
-    for system in systems.order:
+    for system in systems.__all__:
         ms.add(create_system(system))
 
     loader.load_assets(ms)
