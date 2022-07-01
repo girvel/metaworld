@@ -1,4 +1,4 @@
-!npc
+!Npc
 name: bartender
 location: pub
 opinion: 0
@@ -71,8 +71,7 @@ dialogue:
       npcs.brian.will_go_to = locations.central_street
 
       if "brian.meeting" not in player.memory:
-        player.will_talk_to = npcs.brian
-        player.will_talk_about = 'meeting_outside'
+        player.talk_to(npcs.brian, "meeting_outside")
 
   meeting_3:
     lines:

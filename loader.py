@@ -6,7 +6,7 @@ import yaml
 
 import common
 import ui
-from lib.ecs.ecs import Entity
+from lib.ecs.ecs import OwnedEntity, Entity
 
 
 def convert(convertee, path, conversion, expected_type=None):
@@ -55,7 +55,7 @@ def _convert(convertee, path, conversion):
                 _convert(convertee[head], tail, conversion)
 
 
-class Location(Entity):
+class Location(OwnedEntity):
     def __init__(self, **attributes):
         super().__init__(**attributes)
         self.npcs = set()
@@ -65,7 +65,7 @@ class Location(Entity):
         convert(self, 'states.*.options.*.if', condition, str)
 
 
-class Player(Entity):
+class Player(OwnedEntity):
     def __init__(self, **attributes):
         super().__init__(**attributes)
         self.is_player = True
@@ -96,8 +96,12 @@ class Player(Entity):
 
         ui.choose(options, skip=(True, {'does': lambda *_: None}))['does'](self.location, self, world)
 
+    def talk_to(self, target, about):
+        self.will_talk_to = target
+        self.will_talk_about = about
 
-class Npc(Entity):
+
+class Npc(OwnedEntity):
     def __init__(self, **attributes):
         super().__init__(**attributes)
         self.business = None
@@ -133,9 +137,9 @@ script = lambda x: code(x, exec)
 
 yaml.SafeLoader.add_constructor('!dt', lambda loader, node: dt(loader.construct_scalar(node)))
 
-for tag in [Location, Player, Npc]:
+for tag in [Location, Player, Npc, OwnedEntity]:
     yaml.SafeLoader.add_constructor(
-        '!' + tag.__name__.lower(),
+        '!' + tag.__name__,
         (lambda tag_:
             lambda loader, node:
                 tag_(**loader.construct_mapping(node, True))
@@ -167,8 +171,8 @@ def load(path, ms):
             )
         })
     elif path.suffix in ('.yaml', '.yml'):
-        result = ms.create(
-            **dict(yaml.safe_load(path.read_text(encoding='utf8'))),
+        result = ms.add(
+            yaml.safe_load(path.read_text(encoding='utf8')),
         )
     else:
         result = ms.create(content=path.read_text(encoding='utf8'))
@@ -178,7 +182,7 @@ def load(path, ms):
 
 
 def load_assets(ms):
-    world = ms.create(**dict(load('assets', ms)))
+    world = ms.add(load('assets', ms))
 
     for _, npc in world.npcs:
         location = world.locations[npc.location]

@@ -1,4 +1,4 @@
-!location
+!Location
 name: house_of_illia_pots
 states:
   normal:
@@ -16,17 +16,13 @@ states:
     line: You see a corpse of an old lady lying on the floor. The head is sliced vertically from a forehead to the jaw. It smells.
     options:
     - line: So, Brian, what do you think of that?
-      does: | 
-        player.will_talk_to = npcs.brian
-        player.will_talk_about = 'murder_expertise'
+      does: player.talk_to(npcs.brian, "murder_expertise")
       if: > 
         npcs.brian.intelligence >= 1 
         and 'brian.murder_expertise' not in player.memory
         and npcs.brian in self.npcs
     - line: Why is she still here?
-      does: |
-        player.will_talk_to = npcs.brian
-        player.will_talk_about = 'corpse'
+      does: player.talk_to(npcs.brian, "corpse")
       if: > 
         'brian.corpse' not in player.memory
         and npcs.brian in self.npcs
