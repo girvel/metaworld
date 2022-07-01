@@ -1,30 +1,15 @@
 from datetime import timedelta
 
-import common
 import ui
 
 
-list = []
-
-
-@list.append
-def travel(traveler: 'will_go_to', clock: 'current_time'):
-    traveler.business = 'traveling'
-    yield from common.wait(clock, timedelta(seconds=30))
-
-    traveler.business = None
-    common.travel(traveler, traveler.will_go_to)
-    del traveler.will_go_to
-
-
-@list.append
 def speech(
     talker: 'will_talk_to',
     world: 'npcs, locations',
-    clock: 'current_time',
+    clock: 'current_time, wait',
 ):
     while talker.business is not None: yield
-    yield from common.wait(clock, timedelta(seconds=5))
+    yield from clock.wait(timedelta(seconds=5))
 
     npc = talker.will_talk_to
     del talker.will_talk_to
@@ -58,21 +43,4 @@ def speech(
             if 'if' not in o or o['if'](**context)
         ])['goto']
 
-    yield from common.wait(clock, timedelta(seconds=30 * amount_of_lines))
-
-
-@list.append
-def decision_making(
-    sapient: 'mind',
-    world: 'npcs, locations',
-    clock: 'current_time',
-):
-    while sapient.business is not None: yield
-    yield from common.wait(clock, sapient.reaction_time)
-
-    sapient.mind(sapient, world)
-
-
-@list.append
-def time(clock: 'current_time'):
-    clock.current_time += timedelta(seconds=1)
+    yield from clock.wait(timedelta(seconds=30 * amount_of_lines))
