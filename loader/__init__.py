@@ -4,7 +4,6 @@ from typing import Union
 
 import yaml
 
-import common
 import ui
 from lib.ecs.ecs import OwnedEntity, Entity
 
@@ -113,6 +112,13 @@ class Npc(OwnedEntity):
         convert(self, 'mind', lambda m: lambda self, world: m(self, None, world))
 
 
+class Clock(OwnedEntity):
+    def wait(self, delta):
+        starting_time = self.current_time
+        while (self.current_time - starting_time) < delta:
+            yield
+
+
 def dt(string):
     h, m, s = map(int, string.split(':', maxsplit=3))
     return timedelta(hours=h, minutes=m, seconds=s)
@@ -125,7 +131,6 @@ def code(source, kind):
             'npcs': world.npcs,
             'self': self,
             'player': player,
-            'common': common,
         })
 
     return freezed_script
@@ -137,7 +142,7 @@ script = lambda x: code(x, exec)
 
 yaml.SafeLoader.add_constructor('!dt', lambda loader, node: dt(loader.construct_scalar(node)))
 
-for tag in [Location, Player, Npc, OwnedEntity]:
+for tag in [Location, Player, Npc, OwnedEntity, Clock]:
     yaml.SafeLoader.add_constructor(
         '!' + tag.__name__,
         (lambda tag_:
