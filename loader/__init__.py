@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Union
 
 import yaml
+import re
 
 import ui
 from lib.ecs.ecs import OwnedEntity, Entity
@@ -10,16 +11,20 @@ from loader import factories
 
 
 for factory in factories.__all__:
-    yaml.SafeLoader.add_constructor(
-        '!' + factory.__name__,
-        (lambda factory_:
-            lambda loader, node: (factory_.__name__.islower()
-                and factory_(loader.construct_scalar(node))
-                or factory_(**loader.construct_mapping(node, True))
-            )
-        )(factory)
-    )
+    tag = f"!{factory.__name__}"
+    loader = (lambda factory_:
+        lambda loader, node: (factory_.__name__.islower()
+            and factory_(loader.construct_scalar(node))
+            or factory_(**loader.construct_mapping(node, True))
+        )
+    )(factory)
 
+    yaml.SafeLoader.add_constructor(tag, loader)
+
+    if hasattr(factory, 'implicit_resolver'):
+        yaml.SafeLoader.add_implicit_resolver(
+            tag, re.compile(factory.implicit_resolver), None,
+        )
 
 def load(path, ms):
     path = Path(path)
@@ -39,6 +44,7 @@ def load(path, ms):
             yaml.safe_load(path.read_text(encoding='utf8')),
         )
     else:
+    
         result = ms.create(content=path.read_text(encoding='utf8'))
 
     result.name = path.stem

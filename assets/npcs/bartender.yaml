@@ -7,7 +7,7 @@ dialogue:
   meeting:
     lines:
     - Officer Errner: Hi.
-    - Bartender: Hello, sir. What can I get you?
+    - Hello, sir. {2 + 2 = }. What can I get you?
     options:
     - line: I will have a beer, please.
       goto: meeting_beer
