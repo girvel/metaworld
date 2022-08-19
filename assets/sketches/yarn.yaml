@@ -1,0 +1,15 @@
+!Npc
+location: starting_point
+
+dialogue:
+  first_meeting:
+    lines:
+    - Yarn: Are you listening?
+    - You are not.
+    - Relo: Of course.
+    - Relo: You've been saying that you are in love with me.
+    - Yarn: "**looks at you disapprovingly**"
+    - Yarn: Do not fuck this up, you understand?
+    - Relo: Yes, yes, I hear you.
+    - Yarn: ...
+    - Yarn: Okay, that is my stop. Sod is five miles to the north, 
