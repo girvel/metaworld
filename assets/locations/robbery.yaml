@@ -1,0 +1,10 @@
+!Location
+
+states:
+  start:
+    line: Ночь, дорога, два человека в мантиях стоят в темноте.
+    if: >
+      'robbery.start' not in player.memory
+    options:
+    - line: Вести светскую беседу
+      does: player.talk_to(npcs.yarn, "prerobbery_talk")

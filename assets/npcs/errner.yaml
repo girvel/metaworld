@@ -1,5 +1,4 @@
 !Player
-name: errner
 coins: 15
-location: pub
+location: robbery
 reaction_time: !dt 00:00:05
