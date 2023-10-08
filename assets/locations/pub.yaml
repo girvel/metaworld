@@ -8,7 +8,7 @@ states:  # TODO write a full description
     if: "'pub.first_time' not in player.memory"
 
   bartender:
-    line: Bartender is pretending to act normally, but you catch his eye for a moment. There could not be much strangers here if your appearance causes such interest.
+    line: Bartender is pretending to act normally, but you catch his eye for a moment. There could not be many strangers here if your appearance causes such interest.
     if: >
       'central_street.normal' not in player.memory
       and 'bartender.meeting' not in player.memory
